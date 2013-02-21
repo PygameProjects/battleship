@@ -36,6 +36,7 @@ TEXTCOLOR = WHITE
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT
     pygame.init()
+    FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
     HELP_SURF = BASICFONT.render("HELP", True, WHITE, GREEN)
