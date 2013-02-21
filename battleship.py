@@ -66,6 +66,7 @@ def check_for_quit():
         
         
 def show_help_screen():
+    # display the help screen until a button is pressed
     line1_surf, line1_rect = make_text_objs('Press a key to exit.', BASICFONT, TEXTCOLOR)
     line1_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT)
     DISPLAYSURF.blit(line1_surf, line1_rect)
@@ -84,6 +85,8 @@ def show_help_screen():
 
         
 def check_for_keypress():
+    # pulling out all KEYDOWN and KEYUP events from queue and returning any KEYUP else
+    # return None
     for event in pygame.event.get([KEYDOWN, KEYUP]):
         if event.type == KEYDOWN:
             continue
