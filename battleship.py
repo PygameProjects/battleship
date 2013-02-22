@@ -19,7 +19,6 @@ WINDOWHEIGHT = 600
 TILESIZE = 40
 BUTTONHEIGHT = 20
 BUTTONWIDTH = 40
-BASICFONTSIZE = 20
 TEXT_HEIGHT = 25
 TEXT_LEFT_POSN = 10
 BOARDWIDTH = 12
@@ -36,15 +35,17 @@ BUTTONCOLOR = GREEN
 TEXTCOLOR = WHITE
 TILECOLOR = GREEN
 BORDERCOLOR = BLUE
+TEXTSHADOWCOLOR = BLUE
 
 
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
-           NEW_RECT
+           NEW_RECT, BIGFONT
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-    BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
+    BASICFONT = pygame.font.Font('freesansbold.ttf', 20)
+    BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
     
     # create buttons
     HELP_SURF = BASICFONT.render("HELP", True, WHITE, GREEN)
@@ -58,6 +59,7 @@ def main():
 
     while True:
         run_game()
+        show_text_screen('Game Over')
         
         
 def run_game():
@@ -115,13 +117,31 @@ def check_for_keypress():
         return event.key
     return None
     
-    
-    
+        
 def make_text_objs(text, font, color):
     surf = font.render(text, True, color)
     return surf, surf.get_rect()
 
+
+def show_text_screen(text):
+    DISPLAYSURF.fill(BGCOLOR)
+    titleSurf, titleRect = make_text_objs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
+    DISPLAYSURF.blit(titleSurf, titleRect)
     
+    titleSurf, titleRect = make_text_objs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+    
+    pressKeySurf, pressKeyRect = make_text_objs('Press a key to play.', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+    
+    while check_for_keypress() == None:
+        pygame.display.update()
+        FPSCLOCK.tick()    
+
+        
     
 if __name__ == "__main__": #This calls the game loop
     main()
