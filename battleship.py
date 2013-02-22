@@ -14,8 +14,8 @@ from pygame.locals import *
 # Set variables, like screen width and height 
 # globals
 FPS = 30
-WINDOWWIDTH = 640
-WINDOWHEIGHT = 480
+WINDOWWIDTH = 800
+WINDOWHEIGHT = 600
 TILESIZE = 40
 BUTTONHEIGHT = 20
 BUTTONWIDTH = 40
@@ -39,7 +39,8 @@ BORDERCOLOR = BLUE
 
 
 def main():
-    global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT
+    global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
+           NEW_RECT
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -48,14 +49,23 @@ def main():
     # create buttons
     HELP_SURF = BASICFONT.render("HELP", True, WHITE, GREEN)
     HELP_RECT = HELP_SURF.get_rect()
-    HELP_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 473)
+    HELP_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 593)
     NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE, GREEN)
     NEW_RECT = NEW_SURF.get_rect()
-    NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 443)
+    NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 563)
     
     pygame.display.set_caption('Battleship')
 
     while True:
+        run_game()
+        
+        
+def run_game():
+    while True:
+        DISPLAYSURF.fill(BGCOLOR)        
+        DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
+        DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
+
         check_for_quit()
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP:
@@ -63,9 +73,6 @@ def main():
                 if HELP_RECT.collidepoint(event.pos):
                     DISPLAYSURF.fill(BGCOLOR)
                     show_help_screen()
-        DISPLAYSURF.fill(BGCOLOR)        
-        DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
-        DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
         
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -79,15 +86,18 @@ def check_for_quit():
         
 def show_help_screen():
     # display the help screen until a button is pressed
-    line1_surf, line1_rect = make_text_objs('Press a key to exit.', BASICFONT, TEXTCOLOR)
+    line1_surf, line1_rect = make_text_objs('Press a key to exit.', BASICFONT,
+                                            TEXTCOLOR)
     line1_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT)
     DISPLAYSURF.blit(line1_surf, line1_rect)
     
-    line2_surf, line2_rect = make_text_objs('Enter instructions here.', BASICFONT, TEXTCOLOR)
+    line2_surf, line2_rect = make_text_objs('Enter instructions here.', 
+                                            BASICFONT, TEXTCOLOR)
     line2_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 2)
     DISPLAYSURF.blit(line2_surf, line2_rect)
 
-    line3_surf, line3_rect = make_text_objs('Enter instructions here.', BASICFONT, TEXTCOLOR)
+    line3_surf, line3_rect = make_text_objs('Enter instructions here.', 
+                                            BASICFONT, TEXTCOLOR)
     line3_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 3)
     DISPLAYSURF.blit(line3_surf, line3_rect)
 
@@ -97,13 +107,14 @@ def show_help_screen():
 
         
 def check_for_keypress():
-    # pulling out all KEYDOWN and KEYUP events from queue and returning any KEYUP else
-    # return None
+    # pulling out all KEYDOWN and KEYUP events from queue and returning any 
+    # KEYUP else return None
     for event in pygame.event.get([KEYDOWN, KEYUP]):
         if event.type == KEYDOWN:
             continue
         return event.key
     return None
+    
     
     
 def make_text_objs(text, font, color):
