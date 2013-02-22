@@ -16,21 +16,26 @@ from pygame.locals import *
 FPS = 30
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
-TILESIDE = 80
+TILESIZE = 40
 BUTTONHEIGHT = 20
 BUTTONWIDTH = 40
 BASICFONTSIZE = 20
 TEXT_HEIGHT = 25
 TEXT_LEFT_POSN = 10
+BOARDWIDTH = 12
+BOARDHEIGHT = 12
 
 BLACK   = (  0,   0,   0)
 WHITE   = (255, 255, 255)
 GREEN   = (  0, 204,   0)
 GRAY    = ( 60,  60,  60)
+BLUE    = (  0,  50, 255)
 
 BGCOLOR = GRAY
 BUTTONCOLOR = GREEN
 TEXTCOLOR = WHITE
+TILECOLOR = GREEN
+BORDERCOLOR = BLUE
 
 
 def main():
@@ -39,9 +44,15 @@ def main():
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
+    
+    # create buttons
     HELP_SURF = BASICFONT.render("HELP", True, WHITE, GREEN)
     HELP_RECT = HELP_SURF.get_rect()
-    HELP_RECT.topleft = (WINDOWWIDTH - 60, WINDOWHEIGHT - 473)
+    HELP_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 473)
+    NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE, GREEN)
+    NEW_RECT = NEW_SURF.get_rect()
+    NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 443)
+    
     pygame.display.set_caption('Battleship')
 
     while True:
@@ -54,6 +65,7 @@ def main():
                     show_help_screen()
         DISPLAYSURF.fill(BGCOLOR)        
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
+        DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
         
         pygame.display.update()
         FPSCLOCK.tick(FPS)
