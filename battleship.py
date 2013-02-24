@@ -73,6 +73,7 @@ def main():
 def run_game():
     revealed_tiles = generate_default_tiles()
     main_board = generate_default_tiles()
+    add_ships_to_board(main_board)
     mousex, mousey = 0, 0
     
     while True:
@@ -108,10 +109,10 @@ def run_game():
 
         
 def generate_default_tiles():
-    revealed_tiles = []
+    default_tiles = []
     for i in range(BOARDWIDTH):
-        revealed_tiles.append([False] * BOARDHEIGHT)
-    return revealed_tiles
+        default_tiles.append([False] * BOARDHEIGHT)
+    return default_tiles
 
     
 def reveal_tiles_animation(board, tiles_to_reveal):
@@ -122,9 +123,15 @@ def reveal_tiles_animation(board, tiles_to_reveal):
 def draw_tile_covers(board, tiles, coverage):
     for tile in tiles:
         left, top = left_top_coords_tile(tile[0], tile[1])
-        pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, TILESIZE))
+        if board[tile[0]][tile[1]] == True:
+            pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
+                                                      TILESIZE))
+        else:
+            pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, 
+                                                    TILESIZE))
         if coverage > 0:
-            pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, coverage, TILESIZE))
+            pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, coverage, 
+                                                      TILESIZE))
             
     pygame.display.update()
     FPSCLOCK.tick(FPS)
@@ -141,17 +148,34 @@ def draw_board(board, revealed):
         for tiley in range(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
             if not revealed[tilex][tiley]:
-                pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE, TILESIZE))
+                pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE,
+                                                          TILESIZE))
             else:
                 if board[tilex][tiley] == True:
-                    pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE, TILESIZE))
+                    pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, 
+                                     TILESIZE, TILESIZE))
                 else:
-                    pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, TILESIZE))
+                    pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, 
+                                     TILESIZE, TILESIZE))
                 
     for x in range(0, BOARDWIDTH * TILESIZE, TILESIZE):
-        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN, YMARGIN), (x + XMARGIN, WINDOWHEIGHT - YMARGIN))
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN, YMARGIN), \
+                        (x + XMARGIN, WINDOWHEIGHT - YMARGIN))
     for y in range(0, BOARDHEIGHT * TILESIZE, TILESIZE):
-        pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN, y + YMARGIN), (WINDOWWIDTH - (DISPLAYWIDTH + 20 + XMARGIN), y + YMARGIN))
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN, y + YMARGIN), \
+                (WINDOWWIDTH - (DISPLAYWIDTH + 20 + XMARGIN), y + YMARGIN))
+        
+
+def add_ships_to_board(board):
+    # this is a stub for the prototype only. needs to be refactored for next
+    # milestone
+    new_board = board
+    board[1][1] = True
+    board[1][2] = True
+    board[1][8] = True
+    board[2][8] = True
+    board[3][8] = True
+    board[5][8] = True
 
         
 def left_top_coords_tile(tilex, tiley):
@@ -223,7 +247,8 @@ def show_text_screen(text):
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
     DISPLAYSURF.blit(titleSurf, titleRect)
     
-    pressKeySurf, pressKeyRect = make_text_objs('Press a key to play.', BASICFONT, TEXTCOLOR)
+    pressKeySurf, pressKeyRect = make_text_objs('Press a key to play.', 
+                                                BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
     
