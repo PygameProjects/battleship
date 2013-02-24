@@ -14,6 +14,7 @@ from pygame.locals import *
 # Set variables, like screen width and height 
 # globals
 FPS = 30
+REVEALSPEED = 8
 WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 TILESIZE = 40
@@ -42,6 +43,7 @@ TILECOLOR = GREEN
 BORDERCOLOR = BLUE
 TEXTSHADOWCOLOR = BLUE
 SHIPCOLOR = YELLOW
+HIGHLIGHTCOLOR = BLUE
 
 
 def main():
@@ -69,13 +71,14 @@ def main():
         
         
 def run_game():
-    revealed_boxes = generate_revealed_boxes(False)
+    revealed_tiles = generate_revealed_tiles(False)
+    mousex, mousey = 0, 0
     
     while True:
         DISPLAYSURF.fill(BGCOLOR)        
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
-        draw_board(revealed_boxes)
+        draw_board(revealed_tiles)
 
         check_for_quit()
         for event in pygame.event.get():
@@ -84,18 +87,44 @@ def run_game():
                 if HELP_RECT.collidepoint(event.pos):
                     DISPLAYSURF.fill(BGCOLOR)
                     show_help_screen()
+                else:
+                    mousex, mousey = event.pos
+                    mouse_clicked = True
+            elif event.type == MOUSEMOTION:
+                mousex, mousey = event.pos
+                    
+        tilex, tiley = get_tile_at_pixel(mousex, mousey)
+        if tilex != None and tiley != None:
+            if not revealed_tiles[tilex][tiley]:
+                draw_highlight_tile(tilex, tiley)
         
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
         
-def generate_revealed_boxes(val):
-    revealed_boxes = []
+def generate_revealed_tiles(val):
+    revealed_tiles = []
     for i in range(BOARDWIDTH):
-        revealed_boxes.append([val] * BOARDHEIGHT)
-    return revealed_boxes
+        revealed_tiles.append([val] * BOARDHEIGHT)
+    return revealed_tiles
     
     
+def reveal_tiles_animation(board, tiles_to_reveal):
+    for coverage in range(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
+        draw_tile_covers(board, tiles_to_reveal, coverage)
+
+        
+def draw_tile_covers(board, tiles, coverage):
+    for tile in tiles:
+        left, top = left_top_coords_tile(tile[0], tile[1])
+        pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, TILESIZE))
+        if coverage > 0:
+            pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, coverage, TILESIZE))
+            
+    pygame.display.update()
+    FPSCLOCK.tick(FPS)
+
+        
 def check_for_quit():
     for event in pygame.event.get(QUIT):
         pygame.quit()
@@ -103,10 +132,10 @@ def check_for_quit():
 
 
 def draw_board(revealed):
-    for boxx in range(BOARDWIDTH):
-        for boxy in range(BOARDHEIGHT):
-            left, top = left_top_coords_box(boxx, boxy)
-            if not revealed[boxx][boxy]:
+    for tilex in range(BOARDWIDTH):
+        for tiley in range(BOARDHEIGHT):
+            left, top = left_top_coords_tile(tilex, tiley)
+            if not revealed[tilex][tiley]:
                 pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE, TILESIZE))
             else:
                 pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE, TILESIZE))
@@ -117,10 +146,26 @@ def draw_board(revealed):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN, y + YMARGIN), (WINDOWWIDTH - (DISPLAYWIDTH + 20 + XMARGIN), y + YMARGIN))
 
         
-def left_top_coords_box(boxx, boxy):
-    left = boxx * TILESIZE + XMARGIN
-    top = boxy * TILESIZE + YMARGIN
+def left_top_coords_tile(tilex, tiley):
+    left = tilex * TILESIZE + XMARGIN
+    top = tiley * TILESIZE + YMARGIN
     return (left, top)
+    
+    
+def get_tile_at_pixel(x, y):
+    for tilex in range(BOARDWIDTH):
+        for tiley in range(BOARDHEIGHT):
+            left, top = left_top_coords_tile(tilex, tiley)
+            tile_rect = pygame.Rect(left, top, TILESIZE, TILESIZE)
+            if tile_rect.collidepoint(x, y):
+                return (tilex, tiley)
+    return (None, None)
+    
+    
+def draw_highlight_tile(tilex, tiley):
+    left, top = left_top_coords_tile(tilex, tiley)
+    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR,
+                    (left, top, TILESIZE, TILESIZE), 4)
  
  
 def show_help_screen():
