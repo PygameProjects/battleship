@@ -71,14 +71,16 @@ def main():
         
         
 def run_game():
-    revealed_tiles = generate_revealed_tiles(False)
+    revealed_tiles = generate_default_tiles()
+    main_board = generate_default_tiles()
     mousex, mousey = 0, 0
     
     while True:
         DISPLAYSURF.fill(BGCOLOR)        
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
-        draw_board(revealed_tiles)
+        draw_board(main_board, revealed_tiles)
+        mouse_clicked = False
 
         check_for_quit()
         for event in pygame.event.get():
@@ -97,17 +99,20 @@ def run_game():
         if tilex != None and tiley != None:
             if not revealed_tiles[tilex][tiley]:
                 draw_highlight_tile(tilex, tiley)
-        
+            if not revealed_tiles[tilex][tiley] and mouse_clicked:
+                reveal_tiles_animation(main_board, [(tilex, tiley)])
+                revealed_tiles[tilex][tiley] = True
+                
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
         
-def generate_revealed_tiles(val):
+def generate_default_tiles():
     revealed_tiles = []
     for i in range(BOARDWIDTH):
-        revealed_tiles.append([val] * BOARDHEIGHT)
+        revealed_tiles.append([False] * BOARDHEIGHT)
     return revealed_tiles
-    
+
     
 def reveal_tiles_animation(board, tiles_to_reveal):
     for coverage in range(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
@@ -123,22 +128,25 @@ def draw_tile_covers(board, tiles, coverage):
             
     pygame.display.update()
     FPSCLOCK.tick(FPS)
+    
 
-        
 def check_for_quit():
     for event in pygame.event.get(QUIT):
         pygame.quit()
         sys.exit()
 
 
-def draw_board(revealed):
+def draw_board(board, revealed):
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
             if not revealed[tilex][tiley]:
                 pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE, TILESIZE))
             else:
-                pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE, TILESIZE))
+                if board[tilex][tiley] == True:
+                    pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE, TILESIZE))
+                else:
+                    pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, TILESIZE))
                 
     for x in range(0, BOARDWIDTH * TILESIZE, TILESIZE):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN, YMARGIN), (x + XMARGIN, WINDOWHEIGHT - YMARGIN))
@@ -166,8 +174,8 @@ def draw_highlight_tile(tilex, tiley):
     left, top = left_top_coords_tile(tilex, tiley)
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR,
                     (left, top, TILESIZE, TILESIZE), 4)
- 
- 
+
+
 def show_help_screen():
     # display the help screen until a button is pressed
     line1_surf, line1_rect = make_text_objs('Press a key to exit.', BASICFONT,
