@@ -62,9 +62,10 @@ def main():
     NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 563)
 
     # shot counter
-    SHOTS_SURF = BASICFONT.render("Shots: " + add_shot('n'), True, WHITE)
+    SHOTS_SURF = BASICFONT.render("Shots: ", True, WHITE)
     SHOTS_RECT = SHOTS_SURF.get_rect()
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
+    
     
     pygame.display.set_caption('Battleship')
 
@@ -78,7 +79,8 @@ def run_game():
     main_board = generate_default_tiles()
     add_ships_to_board(main_board)
     mousex, mousey = 0, 0
-        
+    
+    
     while True:
         DISPLAYSURF.fill(BGCOLOR)        
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
@@ -107,10 +109,32 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tiles_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-       
+                add_shot('y') # whenever the user shoots, add shot
+                
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
+
+def add_shot(x):
+    # this adds an item to the counter list, and then returns it's lenght
+    # as a string: '1' for the first call, then '2', etc
+    counter = []
+    if x == 'y':
+        counter.append('shot')
+        return str(len(counter))
+    else:
+        # this is the initial state of the counter ('0')
+        return str(len(counter))
+    #the ISSUE is that I can't draw the output of this function.
+
+    ############### bliting this, didn't work #######################
+#    COUNTER_SURF = BASICFONT.render(add_shot('n'), True, WHITE)
+#    COUNTER_RECT = COUNTER_SURF.get_rect()
+#    COUNTER_RECT.topleft = (WINDOWWIDTH - 700, WINDOWHEIGHT - 570)
+    #I' tried diferent places, for both this and the DISPLAYSURF.blit,
+    #I haven't found the right place, or maybe this is wrong.
+    #################################################################
+    
         
 def generate_default_tiles():
     default_tiles = []
