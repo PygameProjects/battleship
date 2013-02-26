@@ -55,12 +55,12 @@ def main():
     BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
     
     # create buttons
-    HELP_SURF = BASICFONT.render("HELP", True, WHITE, GREEN)
+    HELP_SURF = BASICFONT.render("HELP", True, WHITE)
     HELP_RECT = HELP_SURF.get_rect()
-    HELP_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 593)
-    NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE, GREEN)
+    HELP_RECT.topleft = (WINDOWWIDTH - 180, WINDOWHEIGHT - 350)
+    NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE)
     NEW_RECT = NEW_SURF.get_rect()
-    NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 563)
+    NEW_RECT.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 200)
 
     # shot counter
     SHOTS_SURF = BASICFONT.render("Shots: ", True, WHITE)
@@ -97,6 +97,8 @@ def run_game():
                 if HELP_RECT.collidepoint(event.pos):
                     DISPLAYSURF.fill(BGCOLOR)
                     show_help_screen()
+                elif NEW_RECT.collidepoint(event.pos):
+                    restart_game()
                 else:
                     mousex, mousey = event.pos
                     mouse_clicked = True
@@ -239,6 +241,11 @@ def show_help_screen():
     while check_for_keypress() == None:
         pygame.display.update()
         FPSCLOCK.tick()
+
+
+def restart_game():
+    del COUNTER[:]
+    main()
 
         
 def check_for_keypress():
