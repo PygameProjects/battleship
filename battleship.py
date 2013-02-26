@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 #THIS IS PROJECT ONE, WE'LL FIRST TRY TO MAKE A BATTLESHIP GAME,
 #PLEASE MAKE USE OF COMMENT WHEN PULLING REQUESTS
 
@@ -9,6 +10,7 @@ import random, sys, pygame
 from pygame.locals import *
 # and other modules needed
 
+# ----------------------------------------------
 # Set variables, like screen width and height 
 # globals
 FPS = 30
@@ -46,7 +48,7 @@ HIGHLIGHTCOLOR = BLUE
 
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
-           NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT
+           NEW_RECT, BIGFONT
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -60,11 +62,6 @@ def main():
     NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE, GREEN)
     NEW_RECT = NEW_SURF.get_rect()
     NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 563)
-
-    # shot counter
-    SHOTS_SURF = BASICFONT.render("Shots: " + add_shot('n'), True, WHITE)
-    SHOTS_RECT = SHOTS_SURF.get_rect()
-    SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
     
     pygame.display.set_caption('Battleship')
 
@@ -78,12 +75,11 @@ def run_game():
     main_board = generate_default_tiles()
     add_ships_to_board(main_board)
     mousex, mousey = 0, 0
-        
+    
     while True:
         DISPLAYSURF.fill(BGCOLOR)        
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
-        DISPLAYSURF.blit(SHOTS_SURF, SHOTS_RECT)
         draw_board(main_board, revealed_tiles)
         mouse_clicked = False
 
@@ -107,7 +103,7 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tiles_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-       
+                
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
