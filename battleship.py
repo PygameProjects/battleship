@@ -25,6 +25,7 @@ BOARDHEIGHT = 12
 DISPLAYWIDTH = 200
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - (DISPLAYWIDTH + 20)) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE)) / 2)
+COUNTER = []
 
 BLACK   = (  0,   0,   0)
 WHITE   = (255, 255, 255)
@@ -46,7 +47,7 @@ HIGHLIGHTCOLOR = BLUE
 
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
-           NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT
+           NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT, COUNTER
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -66,6 +67,7 @@ def main():
     SHOTS_RECT = SHOTS_SURF.get_rect()
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
     
+    
     pygame.display.set_caption('Battleship')
 
     while True:
@@ -78,6 +80,7 @@ def run_game():
     main_board = generate_default_tiles()
     add_ships_to_board(main_board)
     mousex, mousey = 0, 0
+    
     
     while True:
         DISPLAYSURF.fill(BGCOLOR)        
@@ -107,10 +110,22 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tiles_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
+                add_shot('y') # whenever the user shoots, add shot
                 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
+
+def add_shot(x):
+    # this adds an item to the counter list, and then returns it's lenght
+    # as a string: '1' for the first call, then '2', etc
+    if x == 'y':
+        COUNTER.append('shot')
+    counter_surf = BASICFONT.render(str(len(COUNTER)), True, WHITE)
+    counter_rect = SHOTS_SURF.get_rect()
+    counter_rect.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
+    DISPLAYSURF.blit(counter_surf, counter_rect)    
+    
         
 def generate_default_tiles():
     default_tiles = []
