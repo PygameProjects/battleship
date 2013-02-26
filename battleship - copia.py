@@ -54,10 +54,10 @@ def main():
     BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
     
     # create buttons
-    HELP_SURF = BASICFONT.render("HELP", True, WHITE, GREEN)
+    HELP_SURF = BASICFONT.render("HELP", True, WHITE)
     HELP_RECT = HELP_SURF.get_rect()
     HELP_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 593)
-    NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE, GREEN)
+    NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE)
     NEW_RECT = NEW_SURF.get_rect()
     NEW_RECT.topleft = (WINDOWWIDTH - 120, WINDOWHEIGHT - 563)
 
