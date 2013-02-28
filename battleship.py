@@ -80,7 +80,7 @@ def run_game():
     main_board = generate_default_tiles()
     add_ships_to_board(main_board)
     mousex, mousey = 0, 0
-    
+    ship_objs = []
     
     while True:
         DISPLAYSURF.fill(BGCOLOR)        
