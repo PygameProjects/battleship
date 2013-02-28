@@ -47,7 +47,8 @@ HIGHLIGHTCOLOR = BLUE
 
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
-           NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT, COUNTER
+           NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT, COUNTER, COUNTER_SURF, \
+           COUNTER_RECT
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -62,11 +63,10 @@ def main():
     NEW_RECT = NEW_SURF.get_rect()
     NEW_RECT.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 200)
 
-    # shot counter
+    # 'Shots:' label
     SHOTS_SURF = BASICFONT.render("Shots: ", True, WHITE)
     SHOTS_RECT = SHOTS_SURF.get_rect()
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
-    
     
     pygame.display.set_caption('Battleship')
 
@@ -80,15 +80,22 @@ def run_game():
     main_board = generate_default_tiles()
     add_ships_to_board(main_board)
     mousex, mousey = 0, 0
-    
+
     
     while True:
+        # counter display (it needs to be here in order to refresh it)
+        COUNTER_SURF = BASICFONT.render(str(len(COUNTER)), True, WHITE)
+        COUNTER_RECT = SHOTS_SURF.get_rect()
+        COUNTER_RECT.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
+        # end of the counter
         DISPLAYSURF.fill(BGCOLOR)        
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
         DISPLAYSURF.blit(SHOTS_SURF, SHOTS_RECT)
+        DISPLAYSURF.blit(COUNTER_SURF, COUNTER_RECT)
         draw_board(main_board, revealed_tiles)
-        mouse_clicked = False
+        mouse_clicked = False 
+    
 
         check_for_quit()
         for event in pygame.event.get():
@@ -112,21 +119,16 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tiles_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-                add_shot('y') # whenever the user shoots, add shot
+                add_shot('y')
                 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
 
 def add_shot(x):
-    # this adds an item to the counter list, and then returns it's lenght
-    # as a string: '1' for the first call, then '2', etc
+    # adds a shot to the COUNTER
     if x == 'y':
-        COUNTER.append('shot')
-    counter_surf = BASICFONT.render(str(len(COUNTER)), True, WHITE)
-    counter_rect = SHOTS_SURF.get_rect()
-    counter_rect.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
-    DISPLAYSURF.blit(counter_surf, counter_rect)    
+        COUNTER.append('shot')    
     
         
 def generate_default_tiles():
@@ -256,8 +258,8 @@ def check_for_keypress():
             continue
         return event.key
     return None
+
     
-        
 def make_text_objs(text, font, color):
     surf = font.render(text, True, color)
     return surf, surf.get_rect()
