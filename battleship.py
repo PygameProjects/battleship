@@ -118,7 +118,7 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tiles_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-                add_shot('y', counter, tilex, tiley)
+                counter = add_shot('y', counter, tilex, tiley)
                 print (counter)
                 
         pygame.display.update()
@@ -127,8 +127,16 @@ def run_game():
 
 def add_shot(x, cntr, tilex, tiley):
     # adds a shot to the COUNTER
+    # x: 
+    # cntr: list containing coordinates of each shot
+    # tilex: int tile position on the x axis
+    # tiley: int tile position on the y axis
+    # returns list with new shot appended
+    temp_cntr = cntr[:]
     if x == 'y':
-        cntr.append((tilex, tiley))    
+        temp_cntr.append((tilex, tiley))    
+        
+    return temp_cntr
 
         
 def generate_default_tiles():
