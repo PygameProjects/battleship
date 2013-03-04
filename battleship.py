@@ -25,7 +25,6 @@ BOARDHEIGHT = 12
 DISPLAYWIDTH = 200
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - (DISPLAYWIDTH + 20)) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE)) / 2)
-COUNTER = []
 
 BLACK   = (  0,   0,   0)
 WHITE   = (255, 255, 255)
@@ -76,16 +75,13 @@ def main():
         
         
 def run_game():
-    revealed_tiles = generate_default_tiles()
-    main_board = generate_default_tiles()
-    add_ships_to_board(main_board)
+    revealed_tiles = generate_default_tiles(False)
+    main_board = generate_default_tiles((None, None))
+    ship_objs = make_ships() # list of ships to be used, holds list of tuples of coords
+    main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
-<<<<<<< HEAD
-    ship_objs = []
-=======
-    counter = []
->>>>>>> bd44cdb8438346b3347a9a5f31abb7fe27554825
-    
+    counter = [] # counter to track number of shots fired
+        
     while True:
         # counter display (it needs to be here in order to refresh it)
         COUNTER_SURF = BASICFONT.render(str(len(counter)), True, WHITE)
@@ -103,12 +99,11 @@ def run_game():
         check_for_quit()
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP:
-                #print (event.pos[0], event.pos[1])
                 if HELP_RECT.collidepoint(event.pos):
                     DISPLAYSURF.fill(BGCOLOR)
                     show_help_screen()
                 elif NEW_RECT.collidepoint(event.pos):
-                    restart_game()
+                    main()
                 else:
                     mousex, mousey = event.pos
                     mouse_clicked = True
@@ -120,45 +115,33 @@ def run_game():
             if not revealed_tiles[tilex][tiley]:
                 draw_highlight_tile(tilex, tiley)
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
-                reveal_tiles_animation(main_board, [(tilex, tiley)])
+                reveal_tile_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-                counter = add_shot('y', counter, tilex, tiley)
-                print (counter)
+                counter.append((tilex, tiley))
                 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
 
-def add_shot(x, cntr, tilex, tiley):
-    # adds a shot to the COUNTER
-    # x: 
-    # cntr: list containing coordinates of each shot
-    # tilex: int tile position on the x axis
-    # tiley: int tile position on the y axis
-    # returns list with new shot appended
-    temp_cntr = cntr[:]
-    if x == 'y':
-        temp_cntr.append((tilex, tiley))    
-        
-    return temp_cntr
-
-        
-def generate_default_tiles():
+def generate_default_tiles(default_value):
+    '''
+    returns list of 12 x 12 tiles set to False
+    '''
     default_tiles = []
     for i in range(BOARDWIDTH):
-        default_tiles.append([False] * BOARDHEIGHT)
+        default_tiles.append([default_value] * BOARDHEIGHT)
     return default_tiles
 
     
-def reveal_tiles_animation(board, tiles_to_reveal):
+def reveal_tile_animation(board, tile_to_reveal):
     for coverage in range(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
-        draw_tile_covers(board, tiles_to_reveal, coverage)
+        draw_tile_covers(board, tile_to_reveal, coverage)
 
         
 def draw_tile_covers(board, tiles, coverage):
     for tile in tiles:
         left, top = left_top_coords_tile(tile[0], tile[1])
-        if board[tile[0]][tile[1]] == True:
+        if board[tile[0]][tile[1]] != (None, None):
             pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
                                                       TILESIZE))
         else:
@@ -179,6 +162,7 @@ def check_for_quit():
 
 
 def draw_board(board, revealed):
+    
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
@@ -186,7 +170,7 @@ def draw_board(board, revealed):
                 pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE,
                                                           TILESIZE))
             else:
-                if board[tilex][tiley] == True:
+                if board[tilex][tiley] != (None, None):
                     pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, 
                                      TILESIZE, TILESIZE))
                 else:
@@ -199,18 +183,46 @@ def draw_board(board, revealed):
     for y in range(0, BOARDHEIGHT * TILESIZE, TILESIZE):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN, y + YMARGIN), \
                 (WINDOWWIDTH - (DISPLAYWIDTH + 20 + XMARGIN), y + YMARGIN))
-        
 
-def add_ships_to_board(board):
+
+def make_ships():
+    '''
+    returns list of tuples of ships, each section of a ship has
+    the tuple (ship name, shot)
+    '''
+    slist = []
+    # make battleship
+    ship = []
+    for i in range(4):
+        ship.append(('battleship',False))
+    slist.append(ship)    
+    # make destroyer
+    ship = []
+    for i in range(3):
+        ship.append(('destroyer',False))
+    slist.append(ship)
+    # make submarine
+    ship = []
+    for i in range(3):
+        ship.append(('submarine',False))
+    slist.append(ship)
+    
+    return slist
+                
+
+def add_ships_to_board(board, ships):
     # this is a stub for the prototype only. needs to be refactored for next
     # milestone
-    new_board = board
-    board[1][1] = True
-    board[1][2] = True
-    board[1][8] = True
-    board[2][8] = True
-    board[3][8] = True
-    board[5][8] = True
+    assert 1==2, 'Work on add_ship_to_board'
+    new_board = board[:]
+    new_board[1][1] = ('destroyer', 0)
+    new_board[1][2] = ('destroyer', 1)
+    new_board[1][8] = ('battleship', 0)
+    new_board[2][8] = ('battleship', 1)
+    new_board[3][8] = ('battleship', 2)
+    new_board[5][8] = ('submarine', 0)
+    new_board[6][8] = ('submarine', 1)
+    return new_board
 
         
 def left_top_coords_tile(tilex, tiley):
@@ -255,11 +267,6 @@ def show_help_screen():
     while check_for_keypress() == None:
         pygame.display.update()
         FPSCLOCK.tick()
-
-
-def restart_game():
-    del COUNTER[:]
-    main()
 
         
 def check_for_keypress():
