@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#THIS IS PROJECT ONE, WE'LL FIRST TRY TO MAKE A BATTLESHIP GAME,
-#PLEASE MAKE USE OF COMMENT WHEN PULLING REQUESTS
-
 
 # Importing pygame modules
 import random, sys, pygame
 from pygame.locals import *
-# and other modules needed
+
 
 # Set variables, like screen width and height 
 # globals
@@ -77,7 +74,8 @@ def main():
 def run_game():
     revealed_tiles = generate_default_tiles(False)
     main_board = generate_default_tiles((None, None))
-    ship_objs = make_ships() # list of ships to be used, holds list of tuples of coords
+    ship_objs = make_ships() # list of ships to be used, holds list of tuples
+                             # of coords
     main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
     counter = [] # counter to track number of shots fired
@@ -134,22 +132,30 @@ def generate_default_tiles(default_value):
 
     
 def reveal_tile_animation(board, tile_to_reveal):
+    '''
+    board: list of board tiles
+    tile_to_reveal: tuple of tile coords to apply the reveal animation to
+    '''
     for coverage in range(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
         draw_tile_covers(board, tile_to_reveal, coverage)
 
         
-def draw_tile_covers(board, tiles, coverage):
-    for tile in tiles:
-        left, top = left_top_coords_tile(tile[0], tile[1])
-        if board[tile[0]][tile[1]] != (None, None):
-            pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
-                                                      TILESIZE))
-        else:
-            pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, 
-                                                    TILESIZE))
-        if coverage > 0:
-            pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, coverage, 
-                                                      TILESIZE))
+def draw_tile_covers(board, tile, coverage):
+    '''
+    board: list of board tiles
+    tile: tuple of tile coords to reveal
+    coverage: int
+    '''
+    left, top = left_top_coords_tile(tile[0][0], tile[0][1])
+    if board[tile[0][0]][tile[0][1]] != (None, None):
+        pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
+                                                  TILESIZE))
+    else:
+        pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, 
+                                                TILESIZE))
+    if coverage > 0:
+        pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, coverage, 
+                                                  TILESIZE))
             
     pygame.display.update()
     FPSCLOCK.tick(FPS)
@@ -162,7 +168,10 @@ def check_for_quit():
 
 
 def draw_board(board, revealed):
-    
+    '''
+    board: list of board tiles
+    revealed: list of revealed tiles
+    '''
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
@@ -211,6 +220,11 @@ def make_ships():
                 
 
 def add_ships_to_board(board, ships):
+    '''
+    return list of board tiles with ships placed on certain tiles
+    board: list of board tiles
+    ships: list of ships (name, bool) to place on board
+    '''
     new_board = board[:]
     for ship in ships:
         for i in range(len(ship)):
@@ -224,12 +238,24 @@ def add_ships_to_board(board, ships):
 
         
 def left_top_coords_tile(tilex, tiley):
+    '''
+    returns left and top pixel coords
+    tilex: int
+    tiley: int
+    return: tuple (int, int)
+    '''
     left = tilex * TILESIZE + XMARGIN
     top = tiley * TILESIZE + YMARGIN
     return (left, top)
     
     
 def get_tile_at_pixel(x, y):
+    '''
+    returns tile coordinates of pixel at top left, defaults to (None, None)
+    x: int
+    y: int
+    return: tuple (tilex, tiley)
+    '''
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
@@ -240,6 +266,10 @@ def get_tile_at_pixel(x, y):
     
     
 def draw_highlight_tile(tilex, tiley):
+    '''
+    tilex: int
+    tiley: int
+    '''
     left, top = left_top_coords_tile(tilex, tiley)
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR,
                     (left, top, TILESIZE, TILESIZE), 4)
@@ -247,19 +277,21 @@ def draw_highlight_tile(tilex, tiley):
 
 def show_help_screen():
     # display the help screen until a button is pressed
-    line1_surf, line1_rect = make_text_objs('Press a key to exit.', BASICFONT,
-                                            TEXTCOLOR)
+    line1_surf, line1_rect = make_text_objs('Press a key to return to the game', 
+                                            BASICFONT, TEXTCOLOR)
     line1_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT)
     DISPLAYSURF.blit(line1_surf, line1_rect)
     
-    line2_surf, line2_rect = make_text_objs('Enter instructions here.', 
+    line2_surf, line2_rect = make_text_objs('This is the classic game of ' \
+                                            'battleship. Your objective is ' \
+                                            'to sink as many ships', 
                                             BASICFONT, TEXTCOLOR)
-    line2_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 2)
+    line2_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 3)
     DISPLAYSURF.blit(line2_surf, line2_rect)
 
-    line3_surf, line3_rect = make_text_objs('Enter instructions here.', 
+    line3_surf, line3_rect = make_text_objs('as possible using only 20 shots.', 
                                             BASICFONT, TEXTCOLOR)
-    line3_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 3)
+    line3_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 4)
     DISPLAYSURF.blit(line3_surf, line3_rect)
 
     while check_for_keypress() == None:
@@ -278,11 +310,20 @@ def check_for_keypress():
 
     
 def make_text_objs(text, font, color):
+    '''
+    text: string
+    font: Font object
+    color: tuple of color (red, green blue)
+    return: surface object, rectangle object
+    '''
     surf = font.render(text, True, color)
     return surf, surf.get_rect()
 
 
 def show_text_screen(text):
+    '''
+    text: string
+    '''
     DISPLAYSURF.fill(BGCOLOR)
     titleSurf, titleRect = make_text_objs(text, BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
