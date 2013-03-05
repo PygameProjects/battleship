@@ -211,17 +211,15 @@ def make_ships():
                 
 
 def add_ships_to_board(board, ships):
-    # this is a stub for the prototype only. needs to be refactored for next
-    # milestone
-    assert 1==2, 'Work on add_ship_to_board'
     new_board = board[:]
-    new_board[1][1] = ('destroyer', 0)
-    new_board[1][2] = ('destroyer', 1)
-    new_board[1][8] = ('battleship', 0)
-    new_board[2][8] = ('battleship', 1)
-    new_board[3][8] = ('battleship', 2)
-    new_board[5][8] = ('submarine', 0)
-    new_board[6][8] = ('submarine', 1)
+    for ship in ships:
+        for i in range(len(ship)):
+            if ship[i][0] == 'battleship':
+                new_board[1][1+i] = ship[i]
+            elif ship[i][0] == 'destroyer':
+                new_board[3][2+i] = ship[i]
+            elif ship[i][0] == 'submarine':
+                new_board[3+i][8] = ship[i]
     return new_board
 
         
