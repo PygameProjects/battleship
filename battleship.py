@@ -9,7 +9,6 @@ from explosion import Blowup
 # Set variables, like screen width and height 
 # globals
 FPS = 30
-REVEALSPEED = 8
 WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 TILESIZE = 40
@@ -136,7 +135,6 @@ def blowup_animation(coord):
 	coord --> tuple of tile coords to apply the blowup animation
 	'''
 	ex = Blowup()	
-	clock = pygame.time.Clock()
 	ex.is_going_on = True
 	while ex.is_going_on:
 		ex.update()
