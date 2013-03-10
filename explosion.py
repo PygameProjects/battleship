@@ -3,9 +3,9 @@ import pygame
 class Blowup(Sprite):
 	def __init__(self):
 		Sprite.__init__(self)
-		self.images = [pygame.image.load("explosion/blowup1.png"), pygame.image.load("explosion/blowup2.png"),
-							pygame.image.load("explosion/blowup3.png"),pygame.image.load("explosion/blowup4.png"),
-							pygame.image.load("explosion/blowup5.png"),pygame.image.load("explosion/blowup6.png")]
+		self.images = [pygame.image.load("img/blowup1.png"), pygame.image.load("img/blowup2.png"),
+							pygame.image.load("img/blowup3.png"),pygame.image.load("img/blowup4.png"),
+							pygame.image.load("img/blowup5.png"),pygame.image.load("img/blowup6.png")]
 		self.image = self.images[0]
 		self.pic_itr = 0
 		self.is_going_on = True

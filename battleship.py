@@ -123,13 +123,14 @@ def run_game():
 
 def generate_default_tiles(default_value):
     '''
-    returns list of 12 x 12 tiles set to False
+    returns list of 10 x 10 tiles set to False
     '''
     default_tiles = []
     for i in range(BOARDWIDTH):
         default_tiles.append([default_value] * BOARDHEIGHT)
     return default_tiles
 
+    
 def blowup_animation(coord):
 	'''
 	coord --> tuple of tile coords to apply the blowup animation
@@ -142,31 +143,22 @@ def blowup_animation(coord):
 		ex.image = pygame.transform.scale(ex.image, (TILESIZE+10,TILESIZE+10))
 		DISPLAYSURF.blit(ex.image,coord)
 		pygame.display.flip()
-		clock.tick(7)
+		FPSCLOCK.tick(10)
 
+        
 def reveal_tile_animation(board, tile_to_reveal):
     '''
     board: list of board tiles
     tile_to_reveal: tuple of tile coords to apply the reveal animation to
     '''
-    draw_tile_covers(board, tile_to_reveal)
-
-        
-def draw_tile_covers(board, tile):
-    '''
-    board: list of board tiles
-    tile: tuple of tile coords to reveal
-    coverage: int
-    '''
-    left, top = left_top_coords_tile(tile[0][0], tile[0][1])
-    if board[tile[0][0]][tile[0][1]] != (None, None):
+    left, top = left_top_coords_tile(tile_to_reveal[0][0], tile_to_reveal[0][1])
+    if board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
     	blowup_animation((left,top))
         pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
                                                   TILESIZE))
     else:
         pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, 
                                                 TILESIZE))
-    
             
     pygame.display.update()
     FPSCLOCK.tick(FPS)
