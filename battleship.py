@@ -194,6 +194,13 @@ def draw_board(board, revealed):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN, y + YMARGIN), \
                 (WINDOWWIDTH - (DISPLAYWIDTH + 20 + XMARGIN), y + YMARGIN))
 
+def ship_length():
+	''' 
+	return --> randomly ship length
+	'''
+	return random.randint(2,6)
+
+
 
 def make_ships():
     '''
@@ -201,20 +208,15 @@ def make_ships():
     the tuple (ship name, shot)
     '''
     slist = []
+    
     # make battleship
-    ship = []
-    for i in range(4):
-        ship.append(('battleship',False))
+    ship = [('battleship',False) for i in range(ship_length())]
     slist.append(ship)    
     # make destroyer
-    ship = []
-    for i in range(3):
-        ship.append(('destroyer',False))
+    ship = [('destroyer',False) for i in range(ship_length())]
     slist.append(ship)
     # make submarine
-    ship = []
-    for i in range(3):
-        ship.append(('submarine',False))
+    ship = [('submarine',False) for i in range(ship_length())]
     slist.append(ship)
     
     return slist
