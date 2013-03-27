@@ -9,6 +9,7 @@ from explosion import Blowup
 # Set variables, like screen width and height 
 # globals
 FPS = 30
+REVEALSPEED = 8
 WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 TILESIZE = 40
@@ -119,9 +120,9 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tile_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-                # if check_revealed_tile(main_board, [(tilex, tiley)]):
-                # if main_board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
-                    # blowup_animation((left, top))
+                if check_revealed_tile(main_board, [(tilex, tiley)]):
+                    left, top = left_top_coords_tile(tilex, tiley)
+                    blowup_animation((left, top))
                 counter.append((tilex, tiley))
                 
         pygame.display.update()
@@ -152,27 +153,40 @@ def blowup_animation(coord):
 		FPSCLOCK.tick(10)
 
 
-def check_revealed_tile(board, tile_to_check):
-    #STUB
-    raise NotImplementedError
-
+def check_revealed_tile(board, tile):
+    # returns True if ship piece at tile location
+    # raise NotImplementedError
+    return board[tile[0][0]][tile[0][1]] != (None, None)
+    
     
 def reveal_tile_animation(board, tile_to_reveal):
     '''
     board: list of board tile tuples ('shipName', boolShot)
     tile_to_reveal: tuple of tile coords to apply the reveal animation to
     '''
-    left, top = left_top_coords_tile(tile_to_reveal[0][0], tile_to_reveal[0][1])
-    if board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
-    	#blowup_animation((left,top))
+    for coverage in range(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
+        draw_tile_covers(board, tile_to_reveal, coverage)
+
+        
+def draw_tile_covers(board, tile, coverage):
+    '''
+    board: list of board tiles
+    tile: tuple of tile coords to reveal
+    coverage: int
+    '''
+    left, top = left_top_coords_tile(tile[0][0], tile[0][1])
+    if check_revealed_tile(board, tile):
         pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
                                                   TILESIZE))
     else:
-        pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, 
+        pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE,
                                                 TILESIZE))
-    
+    if coverage > 0:
+        pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, coverage,
+                                                  TILESIZE))
+            
     pygame.display.update()
-    FPSCLOCK.tick(FPS)
+    FPSCLOCK.tick(FPS)    
     
 
 def check_for_quit():
@@ -355,7 +369,6 @@ def show_text_screen(text):
     while check_for_keypress() == None:
         pygame.display.update()
         FPSCLOCK.tick()    
-
         
     
 if __name__ == "__main__": #This calls the game loop
