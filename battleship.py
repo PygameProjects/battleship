@@ -74,6 +74,7 @@ def main():
         
 def run_game():
     revealed_tiles = generate_default_tiles(False)
+    # main board object, 
     main_board = generate_default_tiles((None, None))
     ship_objs = make_ships() # list of ships to be used, holds list of tuples
                              # of coords
@@ -88,7 +89,7 @@ def run_game():
         COUNTER_RECT.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
         # end of the counter
         DISPLAYSURF.fill(BGCOLOR)
-        DISPLAYSURF.blit(HBUTTON_SURF)
+        #DISPLAYSURF.blit(HBUTTON_SURF)
         #pygame.draw.circle(DISPLAYSURF, GREEN, (WINDOWWIDTH - 180, WINDOWHEIGHT - 350), BUTTONRADIUS)
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
@@ -118,9 +119,9 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tile_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
-                if check_revealed_tile(main_board, [(tilex, tiley)]):
-                if main_board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
-                    blowup_animation((left, top))
+                # if check_revealed_tile(main_board, [(tilex, tiley)]):
+                # if main_board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
+                    # blowup_animation((left, top))
                 counter.append((tilex, tiley))
                 
         pygame.display.update()
@@ -129,7 +130,7 @@ def run_game():
 
 def generate_default_tiles(default_value):
     '''
-    returns list of 10 x 10 tiles set to False
+    returns list of 10 x 10 tiles with tuples ('shipName',boolShot) set to (default_value)
     '''
     default_tiles = []
     for i in range(BOARDWIDTH):
@@ -152,17 +153,18 @@ def blowup_animation(coord):
 
 
 def check_revealed_tile(board, tile_to_check):
-    if board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
-        
-        
+    #STUB
+    raise NotImplementedError
+
+    
 def reveal_tile_animation(board, tile_to_reveal):
     '''
-    board: list of board tiles
+    board: list of board tile tuples ('shipName', boolShot)
     tile_to_reveal: tuple of tile coords to apply the reveal animation to
     '''
     left, top = left_top_coords_tile(tile_to_reveal[0][0], tile_to_reveal[0][1])
     if board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
-    	blowup_animation((left,top))
+    	#blowup_animation((left,top))
         pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
                                                   TILESIZE))
     else:
