@@ -19,6 +19,7 @@ TEXT_LEFT_POSN = 10
 BOARDWIDTH = 10
 BOARDHEIGHT = 10
 DISPLAYWIDTH = 200
+BUTTONRADIUS = 40
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - (DISPLAYWIDTH + 20)) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE)) / 2)
 
@@ -43,7 +44,7 @@ HIGHLIGHTCOLOR = BLUE
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
            NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT, COUNTER_SURF, \
-           COUNTER_RECT
+           COUNTER_RECT, HBUTTON_SURF
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -54,6 +55,7 @@ def main():
     HELP_SURF = BASICFONT.render("HELP", True, WHITE)
     HELP_RECT = HELP_SURF.get_rect()
     HELP_RECT.topleft = (WINDOWWIDTH - 180, WINDOWHEIGHT - 350)
+    HBUTTON_SURF = pygame.draw.circle(DISPLAYSURF, GREEN, HELP_RECT.topleft, BUTTONRADIUS)
     NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE)
     NEW_RECT = NEW_SURF.get_rect()
     NEW_RECT.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 200)
@@ -85,7 +87,9 @@ def run_game():
         COUNTER_RECT = SHOTS_SURF.get_rect()
         COUNTER_RECT.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
         # end of the counter
-        DISPLAYSURF.fill(BGCOLOR)        
+        DISPLAYSURF.fill(BGCOLOR)
+        DISPLAYSURF.blit(HBUTTON_SURF)
+        #pygame.draw.circle(DISPLAYSURF, GREEN, (WINDOWWIDTH - 180, WINDOWHEIGHT - 350), BUTTONRADIUS)
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
         DISPLAYSURF.blit(SHOTS_SURF, SHOTS_RECT)
@@ -114,6 +118,9 @@ def run_game():
             if not revealed_tiles[tilex][tiley] and mouse_clicked:
                 reveal_tile_animation(main_board, [(tilex, tiley)])
                 revealed_tiles[tilex][tiley] = True
+                if check_revealed_tile(main_board, [(tilex, tiley)]):
+                if main_board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
+                    blowup_animation((left, top))
                 counter.append((tilex, tiley))
                 
         pygame.display.update()
@@ -143,6 +150,10 @@ def blowup_animation(coord):
 		pygame.display.flip()
 		FPSCLOCK.tick(10)
 
+
+def check_revealed_tile(board, tile_to_check):
+    if board[tile_to_reveal[0][0]][tile_to_reveal[0][1]] != (None, None):
+        
         
 def reveal_tile_animation(board, tile_to_reveal):
     '''
@@ -157,7 +168,7 @@ def reveal_tile_animation(board, tile_to_reveal):
     else:
         pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, TILESIZE, 
                                                 TILESIZE))
-            
+    
     pygame.display.update()
     FPSCLOCK.tick(FPS)
     
