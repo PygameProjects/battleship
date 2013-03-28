@@ -4,7 +4,6 @@
 # Importing pygame modules
 import random, sys, pygame
 from pygame.locals import *
-from explosion import Blowup
 
 # Set variables, like screen width and height 
 # globals
@@ -45,7 +44,7 @@ HIGHLIGHTCOLOR = BLUE
 def main():
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
            NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT, COUNTER_SURF, \
-           COUNTER_RECT, HBUTTON_SURF
+           COUNTER_RECT, HBUTTON_SURF, EXPLOSION_IMAGES
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
@@ -65,6 +64,11 @@ def main():
     SHOTS_SURF = BASICFONT.render("Shots: ", True, WHITE)
     SHOTS_RECT = SHOTS_SURF.get_rect()
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
+    
+    # Explosion graphics
+    EXPLOSION_IMAGES = [pygame.image.load("img/blowup1.png"), pygame.image.load("img/blowup2.png"),
+                        pygame.image.load("img/blowup3.png"),pygame.image.load("img/blowup4.png"),
+                        pygame.image.load("img/blowup5.png"),pygame.image.load("img/blowup6.png")]
     
     pygame.display.set_caption('Battleship')
 
@@ -88,14 +92,14 @@ def run_game():
         COUNTER_SURF = BASICFONT.render(str(len(counter)), True, WHITE)
         COUNTER_RECT = SHOTS_SURF.get_rect()
         COUNTER_RECT.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
-        # end of the counter
+        
+        # draw the buttons
         DISPLAYSURF.fill(BGCOLOR)
-        #DISPLAYSURF.blit(HBUTTON_SURF)
-        #pygame.draw.circle(DISPLAYSURF, GREEN, (WINDOWWIDTH - 180, WINDOWHEIGHT - 350), BUTTONRADIUS)
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
         DISPLAYSURF.blit(SHOTS_SURF, SHOTS_RECT)
         DISPLAYSURF.blit(COUNTER_SURF, COUNTER_RECT)
+        
         draw_board(main_board, revealed_tiles)
         mouse_clicked = False     
 
@@ -140,17 +144,14 @@ def generate_default_tiles(default_value):
 
     
 def blowup_animation(coord):
-	'''
-	coord --> tuple of tile coords to apply the blowup animation
-	'''
-	ex = Blowup()	
-	ex.is_going_on = True
-	while ex.is_going_on:
-		ex.update()
-		ex.image = pygame.transform.scale(ex.image, (TILESIZE+10,TILESIZE+10))
-		DISPLAYSURF.blit(ex.image,coord)
-		pygame.display.flip()
-		FPSCLOCK.tick(10)
+    '''
+    coord --> tuple of tile coords to apply the blowup animation
+    '''
+    for image in EXPLOSION_IMAGES:
+        image = pygame.transform.scale(image, (TILESIZE+10, TILESIZE+10))
+        DISPLAYSURF.blit(image, coord)
+        pygame.display.flip()
+        FPSCLOCK.tick(10)
 
 
 def check_revealed_tile(board, tile):
