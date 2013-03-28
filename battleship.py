@@ -12,6 +12,7 @@ REVEALSPEED = 8
 WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 TILESIZE = 40
+MARKERSIZE = 40
 BUTTONHEIGHT = 20
 BUTTONWIDTH = 40
 TEXT_HEIGHT = 25
@@ -19,9 +20,10 @@ TEXT_LEFT_POSN = 10
 BOARDWIDTH = 10
 BOARDHEIGHT = 10
 DISPLAYWIDTH = 200
-BUTTONRADIUS = 40
-XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - (DISPLAYWIDTH + 20)) / 2)
-YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE)) / 2)
+EXPLOSIONSPEED = 10
+
+XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - DISPLAYWIDTH - MARKERSIZE) / 2)
+YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE) - MARKERSIZE) / 2)
 
 BLACK   = (  0,   0,   0)
 WHITE   = (255, 255, 255)
@@ -55,7 +57,6 @@ def main():
     HELP_SURF = BASICFONT.render("HELP", True, WHITE)
     HELP_RECT = HELP_SURF.get_rect()
     HELP_RECT.topleft = (WINDOWWIDTH - 180, WINDOWHEIGHT - 350)
-    HBUTTON_SURF = pygame.draw.circle(DISPLAYSURF, GREEN, HELP_RECT.topleft, BUTTONRADIUS)
     NEW_SURF = BASICFONT.render("NEW GAME", True, WHITE)
     NEW_RECT = NEW_SURF.get_rect()
     NEW_RECT.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 200)
@@ -151,7 +152,7 @@ def blowup_animation(coord):
         image = pygame.transform.scale(image, (TILESIZE+10, TILESIZE+10))
         DISPLAYSURF.blit(image, coord)
         pygame.display.flip()
-        FPSCLOCK.tick(10)
+        FPSCLOCK.tick(EXPLOSIONSPEED)
 
 
 def check_revealed_tile(board, tile):
@@ -214,12 +215,12 @@ def draw_board(board, revealed):
                     pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, 
                                      TILESIZE, TILESIZE))
                 
-    for x in range(0, BOARDWIDTH * TILESIZE, TILESIZE):
-        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN, YMARGIN), \
-                        (x + XMARGIN, WINDOWHEIGHT - YMARGIN))
-    for y in range(0, BOARDHEIGHT * TILESIZE, TILESIZE):
-        pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN, y + YMARGIN), \
-                (WINDOWWIDTH - (DISPLAYWIDTH + 20 + XMARGIN), y + YMARGIN))
+    for x in range(0, (BOARDWIDTH + 1) * TILESIZE, TILESIZE):
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN + MARKERSIZE, YMARGIN + MARKERSIZE), \
+                        (x + XMARGIN + MARKERSIZE, WINDOWHEIGHT - YMARGIN))
+    for y in range(0, (BOARDHEIGHT + 1) * TILESIZE, TILESIZE):
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN + MARKERSIZE, y + YMARGIN + MARKERSIZE), \
+                (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE * 2), y + YMARGIN + MARKERSIZE))
 
 
 def make_ships():
@@ -272,8 +273,8 @@ def left_top_coords_tile(tilex, tiley):
     tiley: int
     return: tuple (int, int)
     '''
-    left = tilex * TILESIZE + XMARGIN
-    top = tiley * TILESIZE + YMARGIN
+    left = tilex * TILESIZE + XMARGIN + MARKERSIZE
+    top = tiley * TILESIZE + YMARGIN + MARKERSIZE
     return (left, top)
     
     
