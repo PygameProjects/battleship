@@ -156,7 +156,6 @@ def blowup_animation(coord):
 
 def check_revealed_tile(board, tile):
     # returns True if ship piece at tile location
-    # raise NotImplementedError
     return board[tile[0][0]][tile[0][1]] != (None, None)
     
     
@@ -265,7 +264,7 @@ def add_ships_to_board(board, ships):
                 new_board[3+i][8] = ship[i]
     return new_board
 
-        
+
 def left_top_coords_tile(tilex, tiley):
     '''
     returns left and top pixel coords
@@ -277,6 +276,16 @@ def left_top_coords_tile(tilex, tiley):
     top = tiley * TILESIZE + YMARGIN
     return (left, top)
     
+    
+def left_top_coords_markers(markerx, markery):
+    '''
+    returns left and top pixel coords of the counters
+    tilex: int
+    tiley: int
+    return: tuple (int, int)
+    '''
+    raise NotImplementedError
+
     
 def get_tile_at_pixel(x, y):
     '''
