@@ -87,6 +87,8 @@ def run_game():
     main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
     counter = [] # counter to track number of shots fired
+    xmarkers = [0 for i in range(BOARDWIDTH)] # list of x-axis markers
+    ymarkers = [0 for i in range(BOARDHEIGHT)] # list of y-axis markers
         
     while True:
         # counter display (it needs to be here in order to refresh it)
@@ -102,6 +104,7 @@ def run_game():
         DISPLAYSURF.blit(COUNTER_SURF, COUNTER_RECT)
         
         draw_board(main_board, revealed_tiles)
+        draw_markers(xmarkers, ymarkers)
         mouse_clicked = False     
 
         check_for_quit()
@@ -223,6 +226,22 @@ def draw_board(board, revealed):
                 (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE * 2), y + YMARGIN + MARKERSIZE))
 
 
+def draw_markers(xlist, ylist):
+    for i in range(len(xlist)):
+        left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
+        top = YMARGIN
+        marker_surf, marker_rect = make_text_objs(str(xlist[i]), BASICFONT, TEXTCOLOR)
+        marker_rect.topleft = (left, top)
+        DISPLAYSURF.blit(marker_surf, marker_rect)
+    for i in range(len(ylist)):
+        left = XMARGIN
+        top = i * MARKERSIZE + YMARGIN + MARKERSIZE + (TILESIZE / 3)
+        marker_surf, marker_rect = make_text_objs(str(ylist[i]), BASICFONT, TEXTCOLOR)
+        marker_rect.topleft = (left, top)
+        DISPLAYSURF.blit(marker_surf, marker_rect)
+        
+
+
 def make_ships():
     '''
     returns list of tuples of ships, each section of a ship has
@@ -277,16 +296,6 @@ def left_top_coords_tile(tilex, tiley):
     top = tiley * TILESIZE + YMARGIN + MARKERSIZE
     return (left, top)
     
-    
-def left_top_coords_markers(markerx, markery):
-    '''
-    returns left and top pixel coords of the counters
-    tilex: int
-    tiley: int
-    return: tuple (int, int)
-    '''
-    raise NotImplementedError
-
     
 def get_tile_at_pixel(x, y):
     '''
