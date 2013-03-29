@@ -87,8 +87,7 @@ def run_game():
     main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
     counter = [] # counter to track number of shots fired
-    xmarkers = [0 for i in range(BOARDWIDTH)] # list of x-axis markers
-    ymarkers = [0 for i in range(BOARDHEIGHT)] # list of y-axis markers
+    xmarkers, ymarkers = set_markers(main_board)
         
     while True:
         # counter display (it needs to be here in order to refresh it)
@@ -226,6 +225,18 @@ def draw_board(board, revealed):
                 (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE * 2), y + YMARGIN + MARKERSIZE))
 
 
+def set_markers(board):
+    xmarkers = [0 for i in range(BOARDWIDTH)]
+    ymarkers = [0 for i in range(BOARDHEIGHT)]
+    for tilex in range(BOARDWIDTH):
+        for tiley in range(BOARDHEIGHT):
+            if board[tilex][tiley] != (None, None):
+                xmarkers[tilex] += 1
+                ymarkers[tiley] += 1
+
+    return xmarkers, ymarkers
+
+                
 def draw_markers(xlist, ylist):
     for i in range(len(xlist)):
         left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
