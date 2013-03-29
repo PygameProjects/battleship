@@ -351,15 +351,14 @@ def show_help_screen():
     line1_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT)
     DISPLAYSURF.blit(line1_surf, line1_rect)
     
-    line2_surf, line2_rect = make_text_objs('This is the classic game of ' \
-                                            'battleship. Your objective is ' \
-                                            'to sink as many ships', 
-                                            BASICFONT, TEXTCOLOR)
+    line2_surf, line2_rect = make_text_objs(
+        'This is a battleship puzzle game. Your objective is ' \
+        'to sink all the ships in as few', BASICFONT, TEXTCOLOR)
     line2_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 3)
     DISPLAYSURF.blit(line2_surf, line2_rect)
 
-    line3_surf, line3_rect = make_text_objs('as possible using only 20 shots.', 
-                                            BASICFONT, TEXTCOLOR)
+    line3_surf, line3_rect = make_text_objs('shots as possible. To reset your'\
+        ' game click on the "New Game" button.', BASICFONT, TEXTCOLOR)
     line3_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 4)
     DISPLAYSURF.blit(line3_surf, line3_rect)
 
