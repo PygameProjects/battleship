@@ -51,7 +51,7 @@ def main():
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', 20)
-    BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
+    BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
     
     # create buttons
     HELP_SURF = BASICFONT.render("HELP", True, WHITE)
@@ -74,14 +74,14 @@ def main():
     pygame.display.set_caption('Battleship')
 
     while True:
-        run_game()
-        show_text_screen('Game Over')
+        shots_taken = run_game()
+        show_gameover_screen(shots_taken)
         
         
 def run_game():
     revealed_tiles = generate_default_tiles(False)
     # main board object, 
-    main_board = generate_default_tiles((None, None))
+    main_board = generate_default_tiles(None)
     ship_objs = make_ships() # list of ships to be used, holds list of tuples
                              # of coords
     main_board = add_ships_to_board(main_board, ship_objs)
@@ -130,6 +130,9 @@ def run_game():
                 if check_revealed_tile(main_board, [(tilex, tiley)]):
                     left, top = left_top_coords_tile(tilex, tiley)
                     blowup_animation((left, top))
+                    if check_for_win(main_board, revealed_tiles):
+                        counter.append((tilex, tiley))
+                        return len(counter)
                 counter.append((tilex, tiley))
                 
         pygame.display.update()
@@ -159,7 +162,7 @@ def blowup_animation(coord):
 
 def check_revealed_tile(board, tile):
     # returns True if ship piece at tile location
-    return board[tile[0][0]][tile[0][1]] != (None, None)
+    return board[tile[0][0]][tile[0][1]] != None
     
     
 def reveal_tile_animation(board, tile_to_reveal):
@@ -197,6 +200,13 @@ def check_for_quit():
         pygame.quit()
         sys.exit()
 
+        
+def check_for_win(board, revealed):
+    for tilex in range(BOARDWIDTH):
+        for tiley in range(BOARDHEIGHT):
+            if board[tilex][tiley] != None and not revealed[tilex][tiley]:
+                return False
+    return True
 
 def draw_board(board, revealed):
     '''
@@ -210,7 +220,7 @@ def draw_board(board, revealed):
                 pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE,
                                                           TILESIZE))
             else:
-                if board[tilex][tiley] != (None, None):
+                if board[tilex][tiley] != None:
                     pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, 
                                      TILESIZE, TILESIZE))
                 else:
@@ -230,7 +240,7 @@ def set_markers(board):
     ymarkers = [0 for i in range(BOARDHEIGHT)]
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
-            if board[tilex][tiley] != (None, None):
+            if board[tilex][tiley] != None:
                 xmarkers[tilex] += 1
                 ymarkers[tiley] += 1
 
@@ -262,17 +272,17 @@ def make_ships():
     # make battleship
     ship = []
     for i in range(4):
-        ship.append(('battleship',False))
+        ship.append('battleship')
     slist.append(ship)    
     # make destroyer
     ship = []
     for i in range(3):
-        ship.append(('destroyer',False))
+        ship.append('destroyer')
     slist.append(ship)
     # make submarine
     ship = []
     for i in range(3):
-        ship.append(('submarine',False))
+        ship.append('submarine')
     slist.append(ship)
     
     return slist
@@ -287,11 +297,11 @@ def add_ships_to_board(board, ships):
     new_board = board[:]
     for ship in ships:
         for i in range(len(ship)):
-            if ship[i][0] == 'battleship':
+            if ship[i] == 'battleship':
                 new_board[1][1+i] = ship[i]
-            elif ship[i][0] == 'destroyer':
+            elif ship[i] == 'destroyer':
                 new_board[3][2+i] = ship[i]
-            elif ship[i][0] == 'submarine':
+            elif ship[i] == 'submarine':
                 new_board[3+i][8] = ship[i]
     return new_board
 
@@ -379,20 +389,28 @@ def make_text_objs(text, font, color):
     return surf, surf.get_rect()
 
 
-def show_text_screen(text):
+def show_gameover_screen(shots_fired):
     '''
     text: string
     '''
     DISPLAYSURF.fill(BGCOLOR)
-    titleSurf, titleRect = make_text_objs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:', BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
     DISPLAYSURF.blit(titleSurf, titleRect)
     
-    titleSurf, titleRect = make_text_objs(text, BIGFONT, TEXTCOLOR)
+    titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:', BIGFONT, TEXTCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
     DISPLAYSURF.blit(titleSurf, titleRect)
     
-    pressKeySurf, pressKeyRect = make_text_objs('Press a key to play.', 
+    titleSurf, titleRect = make_text_objs(str(shots_fired) + ' shots', BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2 + 50))
+    DISPLAYSURF.blit(titleSurf, titleRect)
+    
+    titleSurf, titleRect = make_text_objs(str(shots_fired) + ' shots', BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2 + 50) - 3)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    pressKeySurf, pressKeyRect = make_text_objs('Press a key to try to beat that score.', 
                                                 BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
