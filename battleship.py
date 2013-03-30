@@ -292,6 +292,13 @@ def add_ships_to_board(board, ships):
     return new_board
 
 
+def make_ship_position(board, xPos, yPos, isHorizontal, length):
+    valid_position = False
+    ship_coordinates = []
+    if isHorizontal:
+        
+    
+    
 def left_top_coords_tile(tilex, tiley):
     '''
     returns left and top pixel coords
