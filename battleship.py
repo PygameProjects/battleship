@@ -82,8 +82,7 @@ def run_game():
     revealed_tiles = generate_default_tiles(False)
     # main board object, 
     main_board = generate_default_tiles(None)
-    ship_objs = make_ships() # list of ships to be used, holds list of tuples
-                             # of coords
+    ship_objs = ['battleship','destroyer','submarine'] # list of ships to be used
     main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
     counter = [] # counter to track number of shots fired
@@ -163,8 +162,8 @@ def blowup_animation(coord):
 def check_revealed_tile(board, tile):
     # returns True if ship piece at tile location
     return board[tile[0][0]][tile[0][1]] != None
-    
-    
+
+
 def reveal_tile_animation(board, tile_to_reveal):
     '''
     board: list of board tile tuples ('shipName', boolShot)
@@ -193,20 +192,21 @@ def draw_tile_covers(board, tile, coverage):
             
     pygame.display.update()
     FPSCLOCK.tick(FPS)    
-    
+
 
 def check_for_quit():
     for event in pygame.event.get(QUIT):
         pygame.quit()
         sys.exit()
 
-        
+
 def check_for_win(board, revealed):
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
             if board[tilex][tiley] != None and not revealed[tilex][tiley]:
                 return False
     return True
+
 
 def draw_board(board, revealed):
     '''
@@ -246,7 +246,7 @@ def set_markers(board):
 
     return xmarkers, ymarkers
 
-                
+
 def draw_markers(xlist, ylist):
     for i in range(len(xlist)):
         left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
@@ -260,49 +260,23 @@ def draw_markers(xlist, ylist):
         marker_surf, marker_rect = make_text_objs(str(ylist[i]), BASICFONT, TEXTCOLOR)
         marker_rect.topleft = (left, top)
         DISPLAYSURF.blit(marker_surf, marker_rect)
-        
 
-
-def make_ships():
-    '''
-    returns list of tuples of ships, each section of a ship has
-    the tuple (ship name, shot)
-    '''
-    slist = []
-    # make battleship
-    ship = []
-    for i in range(4):
-        ship.append('battleship')
-    slist.append(ship)    
-    # make destroyer
-    ship = []
-    for i in range(3):
-        ship.append('destroyer')
-    slist.append(ship)
-    # make submarine
-    ship = []
-    for i in range(3):
-        ship.append('submarine')
-    slist.append(ship)
-    
-    return slist
-                
 
 def add_ships_to_board(board, ships):
     '''
     return list of board tiles with ships placed on certain tiles
     board: list of board tiles
-    ships: list of ships (name, bool) to place on board
+    ships: list of ships to place on board
     '''
     new_board = board[:]
     for ship in ships:
-        for i in range(len(ship)):
-            if ship[i] == 'battleship':
-                new_board[1][1+i] = ship[i]
-            elif ship[i] == 'destroyer':
-                new_board[3][2+i] = ship[i]
-            elif ship[i] == 'submarine':
-                new_board[3+i][8] = ship[i]
+        if ship == 'battleship':
+            new_board[1][1+i] = ship
+        elif ship == 'destroyer':
+            new_board[3][2+i] = ship
+        elif ship == 'submarine':
+            new_board[3+i][8] = ship
+
     return new_board
 
 
@@ -357,11 +331,21 @@ def show_help_screen():
     line2_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 3)
     DISPLAYSURF.blit(line2_surf, line2_rect)
 
-    line3_surf, line3_rect = make_text_objs('shots as possible. To reset your'\
-        ' game click on the "New Game" button.', BASICFONT, TEXTCOLOR)
+    line3_surf, line3_rect = make_text_objs('shots as possible. The markers on the edges of the game board tell you how',
+        BASICFONT, TEXTCOLOR)
     line3_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 4)
     DISPLAYSURF.blit(line3_surf, line3_rect)
 
+    line4_surf, line4_rect = make_text_objs('many ship pieces are in each column and row. To reset your game click on',
+        BASICFONT, TEXTCOLOR)
+    line4_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 5)
+    DISPLAYSURF.blit(line4_surf, line4_rect)
+
+    line5_surf, line5_rect = make_text_objs('the "New Game" button.',
+        BASICFONT, TEXTCOLOR)
+    line5_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 6)
+    DISPLAYSURF.blit(line5_surf, line5_rect)
+    
     while check_for_keypress() == None:
         pygame.display.update()
         FPSCLOCK.tick()
