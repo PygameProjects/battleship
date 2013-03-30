@@ -269,13 +269,25 @@ def add_ships_to_board(board, ships):
     ships: list of ships to place on board
     '''
     new_board = board[:]
+    ship_length = 0
     for ship in ships:
-        if ship == 'battleship':
-            new_board[1][1+i] = ship
-        elif ship == 'destroyer':
-            new_board[3][2+i] = ship
-        elif ship == 'submarine':
-            new_board[3+i][8] = ship
+        valid_ship_position = False
+        while not valid_ship_position:
+            xStartpos = 1
+            yStartpos = 1
+            isHorizontal = True
+            if ship == 'battleship':
+                ship_length = 4
+            elif ship == 'submarine':
+                ship_length = 3
+            elif ship == 'destroyer':
+                ship_length = 2
+
+            valid_ship_position, ship_coords = make_ship_position(new_board,
+                xStartpos, yStartpos, isHorizontal, ship_length):
+            if valid_ship_position:
+                for coord in ship_coords:
+                    new_board[coord[0]][coord[1]] = ship
 
     return new_board
 
