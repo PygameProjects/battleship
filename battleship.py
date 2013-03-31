@@ -82,7 +82,8 @@ def run_game():
     revealed_tiles = generate_default_tiles(False)
     # main board object, 
     main_board = generate_default_tiles(None)
-    ship_objs = ['battleship','cruiser','cruiser','destroyer','destroyer','submarine','submarine'] # list of ships to be used
+    ship_objs = ['battleship','cruiser','cruiser','destroyer','destroyer',
+                 'destroyer','submarine','submarine','submarine','submarine']
     main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
     counter = [] # counter to track number of shots fired
@@ -140,7 +141,8 @@ def run_game():
 
 def generate_default_tiles(default_value):
     '''
-    returns list of 10 x 10 tiles with tuples ('shipName',boolShot) set to (default_value)
+    returns list of 10 x 10 tiles with tuples ('shipName',boolShot) set to 
+    (default_value)
     '''
     default_tiles = []
     for i in range(BOARDWIDTH):
@@ -201,6 +203,7 @@ def check_for_quit():
 
 
 def check_for_win(board, revealed):
+    # returns True if all the ships were revealed
     for tilex in range(BOARDWIDTH):
         for tiley in range(BOARDHEIGHT):
             if board[tilex][tiley] != None and not revealed[tilex][tiley]:
@@ -228,14 +231,21 @@ def draw_board(board, revealed):
                                      TILESIZE, TILESIZE))
                 
     for x in range(0, (BOARDWIDTH + 1) * TILESIZE, TILESIZE):
-        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN + MARKERSIZE, YMARGIN + MARKERSIZE), \
-                        (x + XMARGIN + MARKERSIZE, WINDOWHEIGHT - YMARGIN))
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN + MARKERSIZE,
+            YMARGIN + MARKERSIZE), (x + XMARGIN + MARKERSIZE, 
+            WINDOWHEIGHT - YMARGIN))
     for y in range(0, (BOARDHEIGHT + 1) * TILESIZE, TILESIZE):
-        pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN + MARKERSIZE, y + YMARGIN + MARKERSIZE), \
-                (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE * 2), y + YMARGIN + MARKERSIZE))
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN + MARKERSIZE, y + 
+            YMARGIN + MARKERSIZE), (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE *
+            2), y + YMARGIN + MARKERSIZE))
 
 
 def set_markers(board):
+    '''
+    returns 2 lists of markers with number of ship pieces in each row (xmarkers)
+        and column (ymarkers)
+    board: list of board tiles
+    '''
     xmarkers = [0 for i in range(BOARDWIDTH)]
     ymarkers = [0 for i in range(BOARDHEIGHT)]
     for tilex in range(BOARDWIDTH):
@@ -248,6 +258,10 @@ def set_markers(board):
 
 
 def draw_markers(xlist, ylist):
+    '''
+    xlist: list of row markers
+    ylist: list of column markers
+    '''
     for i in range(len(xlist)):
         left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
         top = YMARGIN
@@ -290,12 +304,18 @@ def add_ships_to_board(board, ships):
             if valid_ship_position:
                 for coord in ship_coords:
                     new_board[coord[0]][coord[1]] = ship
-    # print new_board
-    # raise NotImplementedError
     return new_board
 
 
 def make_ship_position(board, xPos, yPos, isHorizontal, length):
+    '''
+    returns tuple: True if ship position is valid and list ship coordinates
+    board: list of board tiles
+    xPos: x-coordinate of first ship piece
+    yPos: y-coordinate of first ship piece
+    isHorizontal: True if ship is horizontal
+    length: length of ship
+    '''
     ship_coordinates = []
     if isHorizontal:
         for i in range(length):
