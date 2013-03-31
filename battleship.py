@@ -82,8 +82,8 @@ def run_game():
     revealed_tiles = generate_default_tiles(False)
     # main board object, 
     main_board = generate_default_tiles(None)
-    ship_objs = ['battleship','cruiser','cruiser','destroyer','destroyer',
-                 'destroyer','submarine','submarine','submarine','submarine']
+    ship_objs = ['battleship','cruiser1','cruiser2','destroyer1','destroyer2',
+                 'destroyer3','submarine1','submarine2','submarine3','submarine4']
     main_board = add_ships_to_board(main_board, ship_objs)
     mousex, mousey = 0, 0
     counter = [] # counter to track number of shots fired
@@ -290,24 +290,24 @@ def add_ships_to_board(board, ships):
             xStartpos = random.randint(0, 9)
             yStartpos = random.randint(0, 9)
             isHorizontal = random.randint(0, 1)
-            if ship == 'battleship':
+            if 'battleship' in ship:
                 ship_length = 4
-            elif ship == 'cruiser':
+            elif 'cruiser' in ship:
                 ship_length = 3
-            elif ship == 'destroyer':
+            elif 'destroyer'in ship:
                 ship_length = 2
-            elif ship == 'submarine':
+            elif 'submarine' in ship:
                 ship_length = 1
 
             valid_ship_position, ship_coords = make_ship_position(new_board,
-                xStartpos, yStartpos, isHorizontal, ship_length)
+                xStartpos, yStartpos, isHorizontal, ship_length, ship)
             if valid_ship_position:
                 for coord in ship_coords:
                     new_board[coord[0]][coord[1]] = ship
     return new_board
 
 
-def make_ship_position(board, xPos, yPos, isHorizontal, length):
+def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
     '''
     returns tuple: True if ship position is valid and list ship coordinates
     board: list of board tiles
@@ -319,19 +319,27 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length):
     ship_coordinates = []
     if isHorizontal:
         for i in range(length):
-            if (i+xPos > 9) or (board[i+xPos][yPos] != None):
+            if (i+xPos > 9) or (board[i+xPos][yPos] != None) or hasAdjacent(board, i+xPos, yPos, ship):
                 return (False, ship_coordinates)
             else:
                 ship_coordinates.append((i+xPos, yPos))
     else:
         for i in range(length):
-            if (i+yPos > 9) or (board[xPos][i+yPos] != None):
+            if (i+yPos > 9) or (board[xPos][i+yPos] != None) or hasAdjacent(board, xPos, i+yPos, ship):
                 return (False, ship_coordinates)        
             else:
                 ship_coordinates.append((xPos, i+yPos))
     return (True, ship_coordinates)
 
 
+def hasAdjacent(board, xPos, yPos, ship):
+    for x in range(xPos-1,xPos+2):
+        for y in range(yPos-1,yPos+2):
+            if (x in range (10)) and (y in range (10)) and board[x][y] not in (ship, None):
+                return True
+    return False
+    
+    
 def left_top_coords_tile(tilex, tiley):
     '''
     returns left and top pixel coords
