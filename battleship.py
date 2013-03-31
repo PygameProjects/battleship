@@ -67,9 +67,10 @@ def main():
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
     
     # Explosion graphics
-    EXPLOSION_IMAGES = [pygame.image.load("img/blowup1.png"), pygame.image.load("img/blowup2.png"),
-                        pygame.image.load("img/blowup3.png"),pygame.image.load("img/blowup4.png"),
-                        pygame.image.load("img/blowup5.png"),pygame.image.load("img/blowup6.png")]
+    EXPLOSION_IMAGES = [
+        pygame.image.load("img/blowup1.png"), pygame.image.load("img/blowup2.png"),
+        pygame.image.load("img/blowup3.png"),pygame.image.load("img/blowup4.png"),
+        pygame.image.load("img/blowup5.png"),pygame.image.load("img/blowup6.png")]
     
     pygame.display.set_caption('Battleship')
 
@@ -265,13 +266,15 @@ def draw_markers(xlist, ylist):
     for i in range(len(xlist)):
         left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
         top = YMARGIN
-        marker_surf, marker_rect = make_text_objs(str(xlist[i]), BASICFONT, TEXTCOLOR)
+        marker_surf, marker_rect = make_text_objs(str(xlist[i]),
+                                                    BASICFONT, TEXTCOLOR)
         marker_rect.topleft = (left, top)
         DISPLAYSURF.blit(marker_surf, marker_rect)
     for i in range(len(ylist)):
         left = XMARGIN
         top = i * MARKERSIZE + YMARGIN + MARKERSIZE + (TILESIZE / 3)
-        marker_surf, marker_rect = make_text_objs(str(ylist[i]), BASICFONT, TEXTCOLOR)
+        marker_surf, marker_rect = make_text_objs(str(ylist[i]), 
+                                                    BASICFONT, TEXTCOLOR)
         marker_rect.topleft = (left, top)
         DISPLAYSURF.blit(marker_surf, marker_rect)
 
@@ -319,13 +322,15 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
     ship_coordinates = []
     if isHorizontal:
         for i in range(length):
-            if (i+xPos > 9) or (board[i+xPos][yPos] != None) or hasAdjacent(board, i+xPos, yPos, ship):
+            if (i+xPos > 9) or (board[i+xPos][yPos] != None) or \
+                hasAdjacent(board, i+xPos, yPos, ship):
                 return (False, ship_coordinates)
             else:
                 ship_coordinates.append((i+xPos, yPos))
     else:
         for i in range(length):
-            if (i+yPos > 9) or (board[xPos][i+yPos] != None) or hasAdjacent(board, xPos, i+yPos, ship):
+            if (i+yPos > 9) or (board[xPos][i+yPos] != None) or \
+                hasAdjacent(board, xPos, i+yPos, ship):
                 return (False, ship_coordinates)        
             else:
                 ship_coordinates.append((xPos, i+yPos))
@@ -335,7 +340,8 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
 def hasAdjacent(board, xPos, yPos, ship):
     for x in range(xPos-1,xPos+2):
         for y in range(yPos-1,yPos+2):
-            if (x in range (10)) and (y in range (10)) and board[x][y] not in (ship, None):
+            if (x in range (10)) and (y in range (10)) and \
+                (board[x][y] not in (ship, None)):
                 return True
     return False
     
@@ -391,13 +397,13 @@ def show_help_screen():
     line2_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 3)
     DISPLAYSURF.blit(line2_surf, line2_rect)
 
-    line3_surf, line3_rect = make_text_objs('shots as possible. The markers on the edges of the game board tell you how',
-        BASICFONT, TEXTCOLOR)
+    line3_surf, line3_rect = make_text_objs('shots as possible. The markers on'\
+        ' the edges of the game board tell you how', BASICFONT, TEXTCOLOR)
     line3_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 4)
     DISPLAYSURF.blit(line3_surf, line3_rect)
 
-    line4_surf, line4_rect = make_text_objs('many ship pieces are in each column and row. To reset your game click on',
-        BASICFONT, TEXTCOLOR)
+    line4_surf, line4_rect = make_text_objs('many ship pieces are in each'\
+        ' column and row. To reset your game click on', BASICFONT, TEXTCOLOR)
     line4_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 5)
     DISPLAYSURF.blit(line4_surf, line4_rect)
 
@@ -437,24 +443,28 @@ def show_gameover_screen(shots_fired):
     text: string
     '''
     DISPLAYSURF.fill(BGCOLOR)
-    titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:', BIGFONT, TEXTSHADOWCOLOR)
+    titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:',
+                                            BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
     DISPLAYSURF.blit(titleSurf, titleRect)
     
-    titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:', BIGFONT, TEXTCOLOR)
+    titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:', 
+                                            BIGFONT, TEXTCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
     DISPLAYSURF.blit(titleSurf, titleRect)
     
-    titleSurf, titleRect = make_text_objs(str(shots_fired) + ' shots', BIGFONT, TEXTSHADOWCOLOR)
+    titleSurf, titleRect = make_text_objs(str(shots_fired) + ' shots', 
+                                            BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2 + 50))
     DISPLAYSURF.blit(titleSurf, titleRect)
     
-    titleSurf, titleRect = make_text_objs(str(shots_fired) + ' shots', BIGFONT, TEXTCOLOR)
+    titleSurf, titleRect = make_text_objs(str(shots_fired) + ' shots', 
+                                            BIGFONT, TEXTCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2 + 50) - 3)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
-    pressKeySurf, pressKeyRect = make_text_objs('Press a key to try to beat that score.', 
-                                                BASICFONT, TEXTCOLOR)
+    pressKeySurf, pressKeyRect = make_text_objs(
+        'Press a key to try to beat that score.', BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
     
