@@ -429,8 +429,8 @@ def show_help_screen():
 def check_for_keypress():
     # pulling out all KEYDOWN and KEYUP events from queue and returning any 
     # KEYUP else return None
-    for event in pygame.event.get([KEYDOWN, KEYUP]):
-        if event.type == KEYDOWN:
+    for event in pygame.event.get([KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION]):
+        if event.type in (KEYDOWN, MOUSEBUTTONUP, MOUSEBUTTONDOWN, MOUSEMOTION):
             continue
         return event.key
     return None
