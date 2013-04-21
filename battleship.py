@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Game based on tutorials by Al Sweigart in his book 'Making Games with Python
+& Pygame"
+http://inventwithpython.com/pygame/chapters/
+"""
 
 # Importing pygame modules
 import random, sys, pygame
