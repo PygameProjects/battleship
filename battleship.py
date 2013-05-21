@@ -150,9 +150,8 @@ def generate_default_tiles(default_value):
     returns list of 10 x 10 tiles with tuples ('shipName',boolShot) set to 
     (default_value)
     '''
-    default_tiles = []
-    for i in range(BOARDWIDTH):
-        default_tiles.append([default_value] * BOARDHEIGHT)
+    default_tiles = [[default_value]*BOARDHEIGHT for i in xrange(BOARDWIDTH)]
+    
     return default_tiles
 
     
@@ -177,7 +176,7 @@ def reveal_tile_animation(board, tile_to_reveal):
     board: list of board tile tuples ('shipName', boolShot)
     tile_to_reveal: tuple of tile coords to apply the reveal animation to
     '''
-    for coverage in range(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
+    for coverage in xrange(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
         draw_tile_covers(board, tile_to_reveal, coverage)
 
         
@@ -210,8 +209,8 @@ def check_for_quit():
 
 def check_for_win(board, revealed):
     # returns True if all the ships were revealed
-    for tilex in range(BOARDWIDTH):
-        for tiley in range(BOARDHEIGHT):
+    for tilex in xrange(BOARDWIDTH):
+        for tiley in xrange(BOARDHEIGHT):
             if board[tilex][tiley] != None and not revealed[tilex][tiley]:
                 return False
     return True
@@ -222,8 +221,8 @@ def draw_board(board, revealed):
     board: list of board tiles
     revealed: list of revealed tiles
     '''
-    for tilex in range(BOARDWIDTH):
-        for tiley in range(BOARDHEIGHT):
+    for tilex in xrange(BOARDWIDTH):
+        for tiley in xrange(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
             if not revealed[tilex][tiley]:
                 pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left, top, TILESIZE,
@@ -236,14 +235,17 @@ def draw_board(board, revealed):
                     pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, 
                                      TILESIZE, TILESIZE))
                 
-    for x in range(0, (BOARDWIDTH + 1) * TILESIZE, TILESIZE):
+    for x in xrange(0, (BOARDWIDTH + 1) * TILESIZE, TILESIZE):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN + MARKERSIZE,
             YMARGIN + MARKERSIZE), (x + XMARGIN + MARKERSIZE, 
             WINDOWHEIGHT - YMARGIN))
-    for y in range(0, (BOARDHEIGHT + 1) * TILESIZE, TILESIZE):
+    for y in xrange(0, (BOARDHEIGHT + 1) * TILESIZE, TILESIZE):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN + MARKERSIZE, y + 
             YMARGIN + MARKERSIZE), (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE *
             2), y + YMARGIN + MARKERSIZE))
+
+
+
 
 
 def set_markers(board):
@@ -252,10 +254,11 @@ def set_markers(board):
         and column (ymarkers)
     board: list of board tiles
     '''
-    xmarkers = [0 for i in range(BOARDWIDTH)]
-    ymarkers = [0 for i in range(BOARDHEIGHT)]
-    for tilex in range(BOARDWIDTH):
-        for tiley in range(BOARDHEIGHT):
+
+    xmarkers = [0 for i in xrange(BOARDWIDTH)]
+    ymarkers = [0 for i in xrange(BOARDHEIGHT)]
+    for tilex in xrange(BOARDWIDTH):
+        for tiley in xrange(BOARDHEIGHT):
             if board[tilex][tiley] != None:
                 xmarkers[tilex] += 1
                 ymarkers[tiley] += 1
@@ -268,7 +271,7 @@ def draw_markers(xlist, ylist):
     xlist: list of row markers
     ylist: list of column markers
     '''
-    for i in range(len(xlist)):
+    for i in xrange(len(xlist)):
         left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
         top = YMARGIN
         marker_surf, marker_rect = make_text_objs(str(xlist[i]),
@@ -282,6 +285,7 @@ def draw_markers(xlist, ylist):
                                                     BASICFONT, TEXTCOLOR)
         marker_rect.topleft = (left, top)
         DISPLAYSURF.blit(marker_surf, marker_rect)
+
 
 
 def add_ships_to_board(board, ships):
@@ -326,14 +330,14 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
     '''
     ship_coordinates = []
     if isHorizontal:
-        for i in range(length):
+        for i in xrange(length):
             if (i+xPos > 9) or (board[i+xPos][yPos] != None) or \
                 hasAdjacent(board, i+xPos, yPos, ship):
                 return (False, ship_coordinates)
             else:
                 ship_coordinates.append((i+xPos, yPos))
     else:
-        for i in range(length):
+        for i in xrange(length):
             if (i+yPos > 9) or (board[xPos][i+yPos] != None) or \
                 hasAdjacent(board, xPos, i+yPos, ship):
                 return (False, ship_coordinates)        
@@ -343,8 +347,8 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
 
 
 def hasAdjacent(board, xPos, yPos, ship):
-    for x in range(xPos-1,xPos+2):
-        for y in range(yPos-1,yPos+2):
+    for x in xrange(xPos-1,xPos+2):
+        for y in xrange(yPos-1,yPos+2):
             if (x in range (10)) and (y in range (10)) and \
                 (board[x][y] not in (ship, None)):
                 return True
@@ -370,8 +374,8 @@ def get_tile_at_pixel(x, y):
     y: int
     return: tuple (tilex, tiley)
     '''
-    for tilex in range(BOARDWIDTH):
-        for tiley in range(BOARDHEIGHT):
+    for tilex in xrange(BOARDWIDTH):
+        for tiley in xrange(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
             tile_rect = pygame.Rect(left, top, TILESIZE, TILESIZE)
             if tile_rect.collidepoint(x, y):
