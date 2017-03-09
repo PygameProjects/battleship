@@ -57,16 +57,20 @@ HIGHLIGHTCOLOR = BLUE
 
 
 def main():
+    """
+    The main function intializes the variables which will be used by the game.
+    """
     global DISPLAYSURF, FPSCLOCK, BASICFONT, HELP_SURF, HELP_RECT, NEW_SURF, \
            NEW_RECT, SHOTS_SURF, SHOTS_RECT, BIGFONT, COUNTER_SURF, \
            COUNTER_RECT, HBUTTON_SURF, EXPLOSION_IMAGES
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
+    #Fonts used by the game
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', 20)
     BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
     
-    # create buttons
+    # Create and label the buttons
     HELP_SURF = BASICFONT.render("HELP", True, WHITE)
     HELP_RECT = HELP_SURF.get_rect()
     HELP_RECT.topleft = (WINDOWWIDTH - 180, WINDOWHEIGHT - 350)
@@ -79,29 +83,34 @@ def main():
     SHOTS_RECT = SHOTS_SURF.get_rect()
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
     
-    # Explosion graphics
+    # Load the explosion graphics from the /img folder
     EXPLOSION_IMAGES = [
         pygame.image.load("img/blowup1.png"), pygame.image.load("img/blowup2.png"),
         pygame.image.load("img/blowup3.png"),pygame.image.load("img/blowup4.png"),
         pygame.image.load("img/blowup5.png"),pygame.image.load("img/blowup6.png")]
     
+    # Set the title in the menu bar to 'Battleship'
     pygame.display.set_caption('Battleship')
 
+    # Keep the game running at all times
     while True:
-        shots_taken = run_game()
-        show_gameover_screen(shots_taken)
+        shots_taken = run_game() #Run the game until it stops and save the result in shots_taken
+        show_gameover_screen(shots_taken) #Display a gameover screen by passing in shots_taken
         
         
 def run_game():
-    revealed_tiles = generate_default_tiles(False)
+    """
+    This function is executed while a game is running
+    """
+    revealed_tiles = generate_default_tiles(False) #Contains the list of the tiles revealed by user
     # main board object, 
-    main_board = generate_default_tiles(None)
+    main_board = generate_default_tiles(None) #Contains the list of the ships which exists on board
     ship_objs = ['battleship','cruiser1','cruiser2','destroyer1','destroyer2',
-                 'destroyer3','submarine1','submarine2','submarine3','submarine4']
-    main_board = add_ships_to_board(main_board, ship_objs)
-    mousex, mousey = 0, 0
-    counter = [] # counter to track number of shots fired
-    xmarkers, ymarkers = set_markers(main_board)
+                 'destroyer3','submarine1','submarine2','submarine3','submarine4'] # List of the ships available
+    main_board = add_ships_to_board(main_board, ship_objs) #call add_ships_to_board to add the list of ships to the main_board
+    mousex, mousey = 0, 0 #location of mouse
+    counter = [] #counter to track number of shots fired
+    xmarkers, ymarkers = set_markers(main_board) #The numerical markers on each side of the board
         
     while True:
         # counter display (it needs to be here in order to refresh it)
@@ -155,8 +164,11 @@ def run_game():
 
 def generate_default_tiles(default_value):
     '''
-    returns list of 10 x 10 tiles with tuples ('shipName',boolShot) set to 
-    (default_value)
+    Function generates a list of 10 x 10 tiles. The list will contain tuples
+    ('shipName', boolShot) set to their (default_value)
+    
+    default_value -> boolean which tells what the value to set to
+    returns the list of tuples
     '''
     default_tiles = [[default_value]*BOARDHEIGHT for i in xrange(BOARDWIDTH)]
     
@@ -165,17 +177,24 @@ def generate_default_tiles(default_value):
     
 def blowup_animation(coord):
     '''
-    coord --> tuple of tile coords to apply the blowup animation
+    Function creates the explosition played if a ship is shot
+    coord -> tuple of tile coords to apply the blowup animation
     '''
-    for image in EXPLOSION_IMAGES:
+    for image in EXPLOSION_IMAGES: # go through the list of images in the list of pictures and play them in sequence 
+        #Determine the location and size to display the image
         image = pygame.transform.scale(image, (TILESIZE+10, TILESIZE+10))
         DISPLAYSURF.blit(image, coord)
         pygame.display.flip()
-        FPSCLOCK.tick(EXPLOSIONSPEED)
+        FPSCLOCK.tick(EXPLOSIONSPEED) #Determine the delay to play the image with
 
 
 def check_revealed_tile(board, tile):
-    # returns True if ship piece at tile location
+    """
+    Function checks if a tile location contains a ship piece
+    board -> the tiled board either a ship piece or none
+    tile -> location of tile
+    returns True if ship piece exists at tile location
+    """
     return board[tile[0][0]][tile[0][1]] != None
 
 
