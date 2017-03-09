@@ -78,7 +78,7 @@ def main():
     NEW_RECT = NEW_SURF.get_rect()
     NEW_RECT.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 200)
 
-    # 'Shots:' label
+    # The 'Shots:' label at the top
     SHOTS_SURF = BASICFONT.render("Shots: ", True, WHITE)
     SHOTS_RECT = SHOTS_SURF.get_rect()
     SHOTS_RECT.topleft = (WINDOWWIDTH - 750, WINDOWHEIGHT - 570)
@@ -100,7 +100,9 @@ def main():
         
 def run_game():
     """
-    This function is executed while a game is running
+    Function is executed while a game is running.
+    
+    returns the amount of shots taken
     """
     revealed_tiles = generate_default_tiles(False) #Contains the list of the tiles revealed by user
     # main board object, 
@@ -118,44 +120,50 @@ def run_game():
         COUNTER_RECT = SHOTS_SURF.get_rect()
         COUNTER_RECT.topleft = (WINDOWWIDTH - 680, WINDOWHEIGHT - 570)
         
-        # draw the buttons
+        # Fill background
         DISPLAYSURF.fill(BGCOLOR)
+        
+        # draw the buttons
         DISPLAYSURF.blit(HELP_SURF, HELP_RECT)
         DISPLAYSURF.blit(NEW_SURF, NEW_RECT)
         DISPLAYSURF.blit(SHOTS_SURF, SHOTS_RECT)
         DISPLAYSURF.blit(COUNTER_SURF, COUNTER_RECT)
         
+        # Draw the tiles onto the board and their respective markers
         draw_board(main_board, revealed_tiles)
         draw_markers(xmarkers, ymarkers)
-        mouse_clicked = False     
+        
+        mouse_clicked = False
 
         check_for_quit()
+        #Check for pygame events
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP:
-                if HELP_RECT.collidepoint(event.pos):
+                if HELP_RECT.collidepoint(event.pos): #if the help button is clicked on 
                     DISPLAYSURF.fill(BGCOLOR)
-                    show_help_screen()
-                elif NEW_RECT.collidepoint(event.pos):
-                    main()
-                else:
-                    mousex, mousey = event.pos
-                    mouse_clicked = True
-            elif event.type == MOUSEMOTION:
-                mousex, mousey = event.pos
-                    
-        tilex, tiley = get_tile_at_pixel(mousex, mousey)
+                    show_help_screen() #Show the help screen
+                elif NEW_RECT.collidepoint(event.pos): #if the new game button is clicked on
+                    main() #goto main, which resets the game
+                else: #otherwise
+                    mousex, mousey = event.pos #set mouse positions to the new position
+                    mouse_clicked = True #mouse is clicked but not on a button
+            elif event.type == MOUSEMOTION: #Detected mouse motion
+                mousex, mousey = event.pos #set mouse positions to the new position
+        
+        #Check if the mouse is clicked at a position with a ship piece
+        tilex, tiley = get_tile_at_pixel(mousex, mousey) 
         if tilex != None and tiley != None:
-            if not revealed_tiles[tilex][tiley]:
-                draw_highlight_tile(tilex, tiley)
-            if not revealed_tiles[tilex][tiley] and mouse_clicked:
+            if not revealed_tiles[tilex][tiley]: #if the tile the mouse is on is not revealed
+                draw_highlight_tile(tilex, tiley) # draws the hovering highlight over the tile
+            if not revealed_tiles[tilex][tiley] and mouse_clicked: #if the mouse is clicked on the not revealed tile
                 reveal_tile_animation(main_board, [(tilex, tiley)])
-                revealed_tiles[tilex][tiley] = True
-                if check_revealed_tile(main_board, [(tilex, tiley)]):
+                revealed_tiles[tilex][tiley] = True #set the tile to now be revealed
+                if check_revealed_tile(main_board, [(tilex, tiley)]): # if the clicked position contains a ship piece
                     left, top = left_top_coords_tile(tilex, tiley)
-                    blowup_animation((left, top))
-                    if check_for_win(main_board, revealed_tiles):
+                    blowup_animation((left, top)) 
+                    if check_for_win(main_board, revealed_tiles): # check for a win
                         counter.append((tilex, tiley))
-                        return len(counter)
+                        return len(counter) # return the amount of shots taken
                 counter.append((tilex, tiley))
                 
         pygame.display.update()
@@ -163,23 +171,24 @@ def run_game():
 
 
 def generate_default_tiles(default_value):
-    '''
+    """
     Function generates a list of 10 x 10 tiles. The list will contain tuples
-    ('shipName', boolShot) set to their (default_value)
+    ('shipName', boolShot) set to their (default_value).
     
     default_value -> boolean which tells what the value to set to
     returns the list of tuples
-    '''
+    """
     default_tiles = [[default_value]*BOARDHEIGHT for i in xrange(BOARDWIDTH)]
     
     return default_tiles
 
     
 def blowup_animation(coord):
-    '''
-    Function creates the explosition played if a ship is shot
+    """
+    Function creates the explosition played if a ship is shot.
+    
     coord -> tuple of tile coords to apply the blowup animation
-    '''
+    """
     for image in EXPLOSION_IMAGES: # go through the list of images in the list of pictures and play them in sequence 
         #Determine the location and size to display the image
         image = pygame.transform.scale(image, (TILESIZE+10, TILESIZE+10))
@@ -190,7 +199,8 @@ def blowup_animation(coord):
 
 def check_revealed_tile(board, tile):
     """
-    Function checks if a tile location contains a ship piece
+    Function checks if a tile location contains a ship piece.
+    
     board -> the tiled board either a ship piece or none
     tile -> location of tile
     returns True if ship piece exists at tile location
@@ -199,20 +209,25 @@ def check_revealed_tile(board, tile):
 
 
 def reveal_tile_animation(board, tile_to_reveal):
-    '''
-    board: list of board tile tuples ('shipName', boolShot)
-    tile_to_reveal: tuple of tile coords to apply the reveal animation to
-    '''
-    for coverage in xrange(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
+    """
+    Function creates an animation which plays when the mouse is clicked on a tile, and whatever is
+    behind the tile needs to be revealed.
+    
+    board -> list of board tile tuples ('shipName', boolShot)
+    tile_to_reveal -> tuple of tile coords to apply the reveal animation to
+    """
+    for coverage in xrange(TILESIZE, (-REVEALSPEED) - 1, -REVEALSPEED): #Plays animation based on reveal speed
         draw_tile_covers(board, tile_to_reveal, coverage)
 
         
 def draw_tile_covers(board, tile, coverage):
-    '''
-    board: list of board tiles
-    tile: tuple of tile coords to reveal
-    coverage: int
-    '''
+    """
+    Function draws the tiles according to a set of variables.
+    
+    board -> list; of board tiles
+    tile -> tuple; of tile coords to reveal
+    coverage -> int; amount of the tile that is covered
+    """
     left, top = left_top_coords_tile(tile[0][0], tile[0][1])
     if check_revealed_tile(board, tile):
         pygame.draw.rect(DISPLAYSURF, SHIPCOLOR, (left, top, TILESIZE,
@@ -229,25 +244,36 @@ def draw_tile_covers(board, tile, coverage):
 
 
 def check_for_quit():
+    """
+    Function checks if the user has attempted to quit the game.
+    """
     for event in pygame.event.get(QUIT):
         pygame.quit()
         sys.exit()
 
 
 def check_for_win(board, revealed):
-    # returns True if all the ships were revealed
+    """
+    Function checks if the current board state is a winning state.
+    
+    board -> the board which contains the ship pieces
+    revealed -> list of revealed tiles
+    returns True if all the ships are revealed
+    """
     for tilex in xrange(BOARDWIDTH):
         for tiley in xrange(BOARDHEIGHT):
-            if board[tilex][tiley] != None and not revealed[tilex][tiley]:
+            if board[tilex][tiley] != None and not revealed[tilex][tiley]: # check if every board with a ship is revealed, return false if not
                 return False
     return True
 
 
 def draw_board(board, revealed):
-    '''
-    board: list of board tiles
-    revealed: list of revealed tiles
-    '''
+    """
+    Function draws the game board.
+    
+    board -> list of board tiles
+    revealed -> list of revealed tiles
+    """
     for tilex in xrange(BOARDWIDTH):
         for tiley in xrange(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
@@ -276,11 +302,15 @@ def draw_board(board, revealed):
 
 
 def set_markers(board):
-    '''
-    returns 2 lists of markers with number of ship pieces in each row (xmarkers)
-        and column (ymarkers)
+    """
+    Function creates the lists of the markers to the side of the game board which indicates
+    the number of ship pieces in each row and column.
+    
     board: list of board tiles
-    '''
+    returns the 2 lists of markers with number of ship pieces in each row (xmarkers)
+        and column (ymarkers)
+    
+    """
 
     xmarkers = [0 for i in xrange(BOARDWIDTH)]
     ymarkers = [0 for i in xrange(BOARDHEIGHT)]
@@ -294,18 +324,20 @@ def set_markers(board):
 
 
 def draw_markers(xlist, ylist):
-    '''
-    xlist: list of row markers
-    ylist: list of column markers
-    '''
-    for i in xrange(len(xlist)):
+    """
+    Function draws the two list of markers to the side of the board.
+
+    xlist -> list of row markers
+    ylist -> list of column markers
+    """
+    for i in xrange(len(xlist)): #Draw the x-marker list
         left = i * MARKERSIZE + XMARGIN + MARKERSIZE + (TILESIZE / 3)
         top = YMARGIN
         marker_surf, marker_rect = make_text_objs(str(xlist[i]),
                                                     BASICFONT, TEXTCOLOR)
         marker_rect.topleft = (left, top)
         DISPLAYSURF.blit(marker_surf, marker_rect)
-    for i in range(len(ylist)):
+    for i in range(len(ylist)): #Draw the y-marker list
         left = XMARGIN
         top = i * MARKERSIZE + YMARGIN + MARKERSIZE + (TILESIZE / 3)
         marker_surf, marker_rect = make_text_objs(str(ylist[i]), 
@@ -316,11 +348,11 @@ def draw_markers(xlist, ylist):
 
 
 def add_ships_to_board(board, ships):
-    '''
-    return list of board tiles with ships placed on certain tiles
-    board: list of board tiles
-    ships: list of ships to place on board
-    '''
+    """
+    board -> list of board tiles
+    ships -> list of ships to place on board
+    returns list of board tiles with ships placed on certain tiles
+    """
     new_board = board[:]
     ship_length = 0
     for ship in ships:
@@ -347,14 +379,14 @@ def add_ships_to_board(board, ships):
 
 
 def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
-    '''
+    """
     returns tuple: True if ship position is valid and list ship coordinates
     board: list of board tiles
     xPos: x-coordinate of first ship piece
     yPos: y-coordinate of first ship piece
     isHorizontal: True if ship is horizontal
     length: length of ship
-    '''
+    """
     ship_coordinates = []
     if isHorizontal:
         for i in xrange(length):
