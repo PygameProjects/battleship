@@ -393,27 +393,32 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
     length -> length of ship
     returns tuple: True if ship position is valid and list ship coordinates
     """
-    ship_coordinates = []
+    ship_coordinates = [] #the coordinates the ship will occupy
     if isHorizontal:
         for i in xrange(length):
             if (i+xPos > 9) or (board[i+xPos][yPos] != None) or \
-                hasAdjacent(board, i+xPos, yPos, ship):
-                return (False, ship_coordinates)
+                hasAdjacent(board, i+xPos, yPos, ship): #if the ship goes out of bound, hits another ship, or is adjacent to another ship
+                return (False, ship_coordinates) #then return false
             else:
                 ship_coordinates.append((i+xPos, yPos))
     else:
         for i in xrange(length):
             if (i+yPos > 9) or (board[xPos][i+yPos] != None) or \
-                hasAdjacent(board, xPos, i+yPos, ship):
-                return (False, ship_coordinates)        
+                hasAdjacent(board, xPos, i+yPos, ship): #if the ship goes out of bound, hits another ship, or is adjacent to another ship
+                return (False, ship_coordinates) #then return false        
             else:
                 ship_coordinates.append((xPos, i+yPos))
-    return (True, ship_coordinates)
+    return (True, ship_coordinates) #ship is successfully added
 
 
 def hasAdjacent(board, xPos, yPos, ship):
     """
     Funtion checks if a ship has adjacent ships
+    
+    board -> list of board tiles
+    xPos -> x-coordinate of first ship piece
+    yPos -> y-coordinate of first ship piece
+    ship -> the ship being checked for adjacency
     returns true if there are adjacent ships and false if there are no adjacent ships
     """
     for x in xrange(xPos-1,xPos+2):
