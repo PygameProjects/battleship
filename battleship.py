@@ -274,6 +274,7 @@ def draw_board(board, revealed):
     board -> list of board tiles
     revealed -> list of revealed tiles
     """
+    #draws the grids depending on its state
     for tilex in xrange(BOARDWIDTH):
         for tiley in xrange(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
@@ -287,20 +288,18 @@ def draw_board(board, revealed):
                 else:
                     pygame.draw.rect(DISPLAYSURF, BGCOLOR, (left, top, 
                                      TILESIZE, TILESIZE))
-                
+    #draws the horizontal lines            
     for x in xrange(0, (BOARDWIDTH + 1) * TILESIZE, TILESIZE):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (x + XMARGIN + MARKERSIZE,
             YMARGIN + MARKERSIZE), (x + XMARGIN + MARKERSIZE, 
             WINDOWHEIGHT - YMARGIN))
+    #draws the vertical lines
     for y in xrange(0, (BOARDHEIGHT + 1) * TILESIZE, TILESIZE):
         pygame.draw.line(DISPLAYSURF, DARKGRAY, (XMARGIN + MARKERSIZE, y + 
             YMARGIN + MARKERSIZE), (WINDOWWIDTH - (DISPLAYWIDTH + MARKERSIZE *
             2), y + YMARGIN + MARKERSIZE))
 
-
-
-
-
+        
 def set_markers(board):
     """
     Function creates the lists of the markers to the side of the game board which indicates
@@ -309,14 +308,13 @@ def set_markers(board):
     board: list of board tiles
     returns the 2 lists of markers with number of ship pieces in each row (xmarkers)
         and column (ymarkers)
-    
     """
-
     xmarkers = [0 for i in xrange(BOARDWIDTH)]
     ymarkers = [0 for i in xrange(BOARDHEIGHT)]
+    #Loop through the tiles
     for tilex in xrange(BOARDWIDTH):
         for tiley in xrange(BOARDHEIGHT):
-            if board[tilex][tiley] != None:
+            if board[tilex][tiley] != None: #if the tile is a ship piece, then increment the markers 
                 xmarkers[tilex] += 1
                 ymarkers[tiley] += 1
 
@@ -349,18 +347,22 @@ def draw_markers(xlist, ylist):
 
 def add_ships_to_board(board, ships):
     """
+    Function goes through a list of ships and add them randomly into a board.
+    
     board -> list of board tiles
     ships -> list of ships to place on board
     returns list of board tiles with ships placed on certain tiles
     """
     new_board = board[:]
     ship_length = 0
-    for ship in ships:
+    for ship in ships: #go through each ship declared in the list
+        #Randomly find a valid position that fits the ship
         valid_ship_position = False
         while not valid_ship_position:
             xStartpos = random.randint(0, 9)
             yStartpos = random.randint(0, 9)
-            isHorizontal = random.randint(0, 1)
+            isHorizontal = random.randint(0, 1) #vertical or horizontal positioning
+            #Type of ship and their respective length
             if 'battleship' in ship:
                 ship_length = 4
             elif 'cruiser' in ship:
@@ -369,9 +371,11 @@ def add_ships_to_board(board, ships):
                 ship_length = 2
             elif 'submarine' in ship:
                 ship_length = 1
-
+            
+            #check if position is valid
             valid_ship_position, ship_coords = make_ship_position(new_board,
                 xStartpos, yStartpos, isHorizontal, ship_length, ship)
+            #add the ship if it is valid
             if valid_ship_position:
                 for coord in ship_coords:
                     new_board[coord[0]][coord[1]] = ship
@@ -380,12 +384,14 @@ def add_ships_to_board(board, ships):
 
 def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
     """
+    Function makes a ship on a board given a set of variables
+    
+    board -> list of board tiles
+    xPos -> x-coordinate of first ship piece
+    yPos -> y-coordinate of first ship piece
+    isHorizontal -> True if ship is horizontal
+    length -> length of ship
     returns tuple: True if ship position is valid and list ship coordinates
-    board: list of board tiles
-    xPos: x-coordinate of first ship piece
-    yPos: y-coordinate of first ship piece
-    isHorizontal: True if ship is horizontal
-    length: length of ship
     """
     ship_coordinates = []
     if isHorizontal:
@@ -406,6 +412,10 @@ def make_ship_position(board, xPos, yPos, isHorizontal, length, ship):
 
 
 def hasAdjacent(board, xPos, yPos, ship):
+    """
+    Funtion checks if a ship has adjacent ships
+    returns true if there are adjacent ships and false if there are no adjacent ships
+    """
     for x in xrange(xPos-1,xPos+2):
         for y in xrange(yPos-1,yPos+2):
             if (x in range (10)) and (y in range (10)) and \
@@ -415,24 +425,26 @@ def hasAdjacent(board, xPos, yPos, ship):
     
     
 def left_top_coords_tile(tilex, tiley):
-    '''
-    returns left and top pixel coords
-    tilex: int
-    tiley: int
-    return: tuple (int, int)
-    '''
+    """
+    Function calculates and returns the pixel of the tile in the top left corner
+    
+    tilex -> int; x position of tile
+    tiley -> int; y position of tile
+    returns tuple (int, int) which indicates top-left pixel coordinates of tile
+    """
     left = tilex * TILESIZE + XMARGIN + MARKERSIZE
     top = tiley * TILESIZE + YMARGIN + MARKERSIZE
     return (left, top)
     
     
 def get_tile_at_pixel(x, y):
-    '''
-    returns tile coordinates of pixel at top left, defaults to (None, None)
-    x: int
-    y: int
-    return: tuple (tilex, tiley)
-    '''
+    """
+    Function finds the corresponding tile coordinates of pixel at top left, defaults to (None, None) given a coordinate.
+    
+    x -> int; x position of pixel
+    y -> int; y position of pixel
+    returns tuple (tilex, tiley) 
+    """
     for tilex in xrange(BOARDWIDTH):
         for tiley in xrange(BOARDHEIGHT):
             left, top = left_top_coords_tile(tilex, tiley)
@@ -443,17 +455,21 @@ def get_tile_at_pixel(x, y):
     
     
 def draw_highlight_tile(tilex, tiley):
-    '''
-    tilex: int
-    tiley: int
-    '''
+    """
+    Function draws the hovering highlight over the tile.
+    
+    tilex -> int; x position of tile
+    tiley -> int; y position of tile
+    """
     left, top = left_top_coords_tile(tilex, tiley)
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR,
                     (left, top, TILESIZE, TILESIZE), 4)
 
 
 def show_help_screen():
-    # display the help screen until a button is pressed
+    """
+    Function display a help screen until any button is pressed.
+    """
     line1_surf, line1_rect = make_text_objs('Press a key to return to the game', 
                                             BASICFONT, TEXTCOLOR)
     line1_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT)
@@ -480,14 +496,17 @@ def show_help_screen():
     line5_rect.topleft = (TEXT_LEFT_POSN, TEXT_HEIGHT * 6)
     DISPLAYSURF.blit(line5_surf, line5_rect)
     
-    while check_for_keypress() == None:
+    while check_for_keypress() == None: #Check if the user has pressed keys, if so go back to the game
         pygame.display.update()
         FPSCLOCK.tick()
 
         
 def check_for_keypress():
-    # pulling out all KEYDOWN and KEYUP events from queue and returning any 
-    # KEYUP else return None
+    """
+    Function checks for any key presses by pulling out all KEYDOWN and KEYUP events from queue.
+    
+    returns any KEYUP events, otherwise return None
+    """
     for event in pygame.event.get([KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION]):
         if event.type in (KEYDOWN, MOUSEBUTTONUP, MOUSEBUTTONDOWN, MOUSEMOTION):
             continue
@@ -496,20 +515,24 @@ def check_for_keypress():
 
     
 def make_text_objs(text, font, color):
-    '''
-    text: string
-    font: Font object
-    color: tuple of color (red, green blue)
-    return: surface object, rectangle object
-    '''
+    """
+    Function creates a text.
+    
+    text -> string; content of text
+    font -> Font object; face of font
+    color -> tuple of color (red, green blue); colour of text
+    returns the surface object, rectangle object
+    """
     surf = font.render(text, True, color)
     return surf, surf.get_rect()
 
 
 def show_gameover_screen(shots_fired):
-    '''
-    text: string
-    '''
+    """
+    Function display a gameover screen when the user has successfully shot at every ship pieces.
+    
+    shots_fired -> the number of shots taken before game is over
+    """
     DISPLAYSURF.fill(BGCOLOR)
     titleSurf, titleRect = make_text_objs('Congrats! Puzzle solved in:',
                                             BIGFONT, TEXTSHADOWCOLOR)
@@ -536,7 +559,7 @@ def show_gameover_screen(shots_fired):
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
     
-    while check_for_keypress() == None:
+    while check_for_keypress() == None: #Check if the user has pressed keys, if so start a new game
         pygame.display.update()
         FPSCLOCK.tick()    
         
