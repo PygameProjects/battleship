@@ -1,35 +1,42 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+This is a project powered by Codecademy students.
+The project features a modified single-player version of the classic game: battleships.
+
 Game based on tutorials by Al Sweigart in his book 'Making Games with Python
 & Pygame"
 http://inventwithpython.com/pygame/chapters/
-"""
 
+The game requires python 2 and the pygame modules.
+The game is a battleship puzzle game. The objective is to sink all the ships in as few shots as possible.
+The markers on the edges of the game board tell you how many ship pieces are in each column and row.
+"""
 # Importing pygame modules
 import random, sys, pygame
 from pygame.locals import *
 
 # Set variables, like screen width and height 
 # globals
-FPS = 30
-REVEALSPEED = 8
-WINDOWWIDTH = 800
-WINDOWHEIGHT = 600
-TILESIZE = 40
-MARKERSIZE = 40
-BUTTONHEIGHT = 20
-BUTTONWIDTH = 40
-TEXT_HEIGHT = 25
-TEXT_LEFT_POSN = 10
-BOARDWIDTH = 10
-BOARDHEIGHT = 10
-DISPLAYWIDTH = 200
-EXPLOSIONSPEED = 10
+FPS = 30 #Determines the number of frames per second
+REVEALSPEED = 8 #Determines the speed at which the squares reveals after being clicked
+WINDOWWIDTH = 800 #Width of game window
+WINDOWHEIGHT = 600 #Height of game window
+TILESIZE = 40 #Size of the squares in each grid(tile)
+MARKERSIZE = 40 #Size of the box which contatins the number that indicates how many ships in this row/col
+BUTTONHEIGHT = 20 #Height of a standard button
+BUTTONWIDTH = 40 #Width of a standard button
+TEXT_HEIGHT = 25 #Size of the text
+TEXT_LEFT_POSN = 10 #Where the text will be positioned
+BOARDWIDTH = 10 #Number of grids horizontally
+BOARDHEIGHT = 10 #Number of grids vertically
+DISPLAYWIDTH = 200 #Width of the game board
+EXPLOSIONSPEED = 10 #How fast the explosion graphics will play
 
-XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - DISPLAYWIDTH - MARKERSIZE) / 2)
-YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE) - MARKERSIZE) / 2)
+XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * TILESIZE) - DISPLAYWIDTH - MARKERSIZE) / 2) #x-position of the top left corner of board 
+YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * TILESIZE) - MARKERSIZE) / 2) #y-position of the top left corner of board
 
+#Colours which will be used by the game
 BLACK   = (  0,   0,   0)
 WHITE   = (255, 255, 255)
 GREEN   = (  0, 204,   0)
@@ -38,6 +45,7 @@ BLUE    = (  0,  50, 255)
 YELLOW  = (255, 255,   0)
 DARKGRAY =( 40,  40,  40)
 
+#Determine what to colour each element of the game
 BGCOLOR = GRAY
 BUTTONCOLOR = GREEN
 TEXTCOLOR = WHITE
